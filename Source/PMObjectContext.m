@@ -29,9 +29,13 @@
 #import "PMPersistentStore.h"
 #import "PMObjectID_Private.h"
 
+#import "PMBaseObject_Private.h"
+
 NSString * const PMObjectContextDidSaveNotification = @"PMObjectContextDidSaveNotification";
 NSString * const PMObjectContextSavedObjectsKey = @"PMObjectContextSavedObjectsKey";
 NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObjectsKey";
+
+static NSInteger kContextIDCount = 0;
 
 @implementation PMObjectContext
 {
@@ -42,6 +46,9 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
     BOOL _isSaving;
     NSCondition *_savingCondition;
     NSInteger _savingOperationIndex;
+    
+    NSInteger _temporaryIDCount;
+    NSInteger _contextID;
 }
 
 - (id)initWithPersistentStore:(PMPersistentStore *)persistentStore
@@ -56,6 +63,10 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
         _savingCondition = [[NSCondition alloc] init];
         _objects = [NSMutableDictionary dictionary];
         _deletedObjects = [NSMutableSet set];
+        
+        _temporaryIDCount = 0;
+        _contextID = ++kContextIDCount;
+        
     }
     return self;
 }
@@ -110,11 +121,40 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
         return NO;
     }
     
-    if ([self containsObjectWithKey:object.key])
+    if ([self containsObjectWithObjectID:object.objectID])
         return NO;
     
+    
+    
+    if (object.objectID == nil)
+    {
+        NSInteger itemID = ++_temporaryIDCount;
+        NSInteger temporaryID = [[NSString stringWithFormat:@"%ld00%ld",_contextID, itemID] integerValue];
+        PMObjectID *objectID = [[PMObjectID alloc] initWithTempraryID:temporaryID type:NSStringFromClass(object.class)];
+        object.objectID = objectID;
+    }
+    else
+    {
+        if (object.objectID.temporaryID == YES)
+        {
+            NSString *reason = @"You cannot insert a temporal object into a context.";
+            NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+            [exception raise];
+            return NO;
+        }
+        else if (object.objectID.persistentStore != _persistentStore)
+        {
+            NSString *reason = @"You cannot insert an object from a different persistent store.";
+            NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+            [exception raise];
+            return NO;
+        }
+    }
+        
     _hasChanges = YES;
-    [_objects setValue:object forKey:object.key];
+    
+    [_objects setObject:object forKey:object.objectID.URIRepresentation];
+    
     return YES;
 }
 
@@ -131,9 +171,9 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
     if ([_objects.allValues containsObject:object])
     {
         _hasChanges = YES;
-        [_objects removeObjectForKey:object.key];
+        [_objects removeObjectForKey:object.objectID.URIRepresentation];
         [_deletedObjects addObject:object];
-        [object deleteObjectFromContext];
+        object.context = nil;
     }
 }
 
@@ -160,6 +200,20 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
         // -- SAVED OBJECTS -- //
         NSMutableSet *savedObjects = [NSMutableSet set];
         NSArray *allValues = [_objects.allValues copy];
+        
+        // Create final object ID for temporary ones
+        for (PMBaseObject *object in allValues)
+        {
+            if (object.objectID.isTemporaryID)
+            {
+                shouldSaveCoreDataContext = YES;
+                [self pmd_createPersistentModelObjectForBaseObject:object];
+                object.hasChanges = NO;
+                [savedObjects addObject:object];
+            }
+        }
+        
+        // Update persistent object data.
         for (PMBaseObject *object in allValues)
         {
             if (object.hasChanges)
@@ -175,7 +229,7 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
         NSSet *deletedObjects = [_deletedObjects copy];
         shouldSaveCoreDataContext |= deletedObjects.count > 0;
         for (PMBaseObject *object in deletedObjects)
-            [_persistentStore deletePersistentObjectWithKey:object.key];
+            [_persistentStore deletePersistentObjectWithID:object.objectID.dbID];
         
         BOOL succeed = NO;
         if (shouldSaveCoreDataContext)
@@ -242,7 +296,7 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
     
     for (PMBaseObject *object in savedObjects)
     {
-        PMBaseObject *myObject = [_objects valueForKey:object.key];
+        PMBaseObject *myObject = [_objects objectForKey:object.objectID.URIRepresentation];
         
         if (myObject)
         {
@@ -257,7 +311,7 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
 
 - (NSArray*)objectsOfClass:(Class)objectClass
 {
-    if (![objectClass isSubclassOfClass:[PMBaseObject  class]])
+    if (![objectClass isSubclassOfClass:PMBaseObject.class])
         return @[];
     
     NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(objectClass)];
@@ -266,7 +320,7 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
     
     for (id <PMPersistentObject> mo in result)
     {
-        PMBaseObject *baseObject = [_objects valueForKey:mo.key];
+        PMBaseObject *baseObject = [_objects objectForKey:mo.objectID.URIRepresentation];
         
         if (!baseObject)
         {
@@ -284,24 +338,39 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
 #pragma mark Private Methods
 
 - (void)pmd_updatePersistentModelObjectOfBaseObject:(PMBaseObject*)baseObject
-{    
+{
+    NSAssert(baseObject.objectID.temporaryID == NO, @"Object cannot be temporary");
+    
     NSMutableData *data = [NSMutableData data];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
     [archiver encodeRootObject:baseObject];
     [archiver finishEncoding];
     
-    id<PMPersistentObject> object = [_persistentStore persistentObjectWithID:<#(NSInteger)#>
+    id<PMPersistentObject> object = [_persistentStore persistentObjectWithID:baseObject.objectID.dbID];
     
-    if (!object)
-        object = [_persistentStore createPersistentObjectWithKey:baseObject.key ofType:NSStringFromClass([baseObject class])];
+    NSAssert(object != nil, @"Object should not be nil");
     
-    object.lastUpdate = baseObject.lastUpdate;
-    object.data = data;
+    if (object)
+    {
+        object.lastUpdate = baseObject.lastUpdate;
+        object.data = data;
+    }
+}
+
+- (void)pmd_createPersistentModelObjectForBaseObject:(PMBaseObject*)baseObject
+{
+    NSAssert(baseObject.objectID.temporaryID == YES, @"Object must be temporary");
+    
+    id <PMPersistentObject> persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
+    
+    [_objects removeObjectForKey:baseObject.objectID.URIRepresentation];
+    baseObject.objectID = persistentObject.objectID;
+    [_objects setObject:baseObject forKey:baseObject.objectID.URIRepresentation];
 }
 
 - (PMBaseObject*)pmd_baseObjectFromPersistentStoreWithObjectID:(PMObjectID*)objectID
 {
-    id<PMPersistentObject> object = [_persistentStore persistentObjectWithKey:key];
+    id<PMPersistentObject> object = [_persistentStore persistentObjectWithID:objectID.dbID];
     
     if (object)
     {
@@ -318,15 +387,14 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
 - (PMBaseObject*)pmd_baseObjectFromModelObject:(id<PMPersistentObject>)modelObject
 {    
     NSAssert(modelObject != nil, @"ModelObject should not be nil");
-    NSAssert(modelObject.key != nil, @"Model Object of type %@ has a key == ", modelObject.type, modelObject.key);
+    NSAssert(modelObject.objectID.temporaryID == NO, @"Model Object cannot be temprary");
     
     NSData *data = modelObject.data;
     
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     
     PMBaseObject *baseObject = [unarchiver decodeObject];
-    baseObject.key = modelObject.key;
-    [baseObject registerToContext:self];
+    baseObject.objectID = modelObject.objectID;
     baseObject.lastUpdate = modelObject.lastUpdate;
     
     return baseObject;

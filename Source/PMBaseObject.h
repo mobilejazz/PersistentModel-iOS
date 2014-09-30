@@ -75,7 +75,7 @@ extern NSString * const PMBaseObjectNilKeyException;
 /** 
  * The object ID that identifies the object.
  **/
-- (PMObjectID*)objectID;
+@property (nonatomic, readonly) PMObjectID *objectID;
 
 /** 
  * The date of the last update.

@@ -91,7 +91,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     if (!persistentObject)
     {
         [_dbQueue inDatabase:^(FMDatabase *db) {
-            FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.id = %ld", (long)dbID];
+            FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.id = %ld", objectID.dbID];
             
             if ([resultSet next])
             {
@@ -163,25 +163,39 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     return array;
 }
 
-
-- (PMSQLiteObject*)createPersistentObjectOfType:(NSString*)type
+- (PMSQLiteObject*)createNewEmptyPersistentObjectWithType:(NSString*)type
 {
-    if (type == nil)
-    {
-        NSString *reason = @"Cannot create a persistent object with a nil type.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return nil;
-    }
+    __block BOOL succeed = YES;
+    __block PMSQLiteObject *persistentObject = nil;
     
-    PMSQLiteObject *object = [[PMSQLiteObject alloc] init];
-    object.persistentStore = self;
+    [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        @try
+        {
+            if (![db executeUpdate:@"INSERT INTO Objects (type, creationDate) values (?, ?)", type, @([[NSDate date] timeIntervalSince1970])])
+                @throw UpdateException;
+            
+            sqlite_int64 dbID = db.lastInsertRowId;
+            
+            PMObjectID *objectID = [[PMObjectID alloc] initWithDbID:dbID type:type persistentStore:self];
+            persistentObject = [[PMSQLiteObject alloc] initWithObjectID:objectID];
+            
+            if(![db executeUpdate:@"INSERT INTO Data (id) values (?)", @(dbID)])
+                @throw UpdateException;
+        }
+        @catch (NSException *exception)
+        {
+            succeed = NO;
+            
+            if ([exception.name isEqualToString:PMSQLiteStoreUpdateException])
+                *rollback = YES;
+            else
+                @throw exception;
+        }
+    }];
     
-    [_dictionary setObject:object forKey:key];
-    [_insertedObjects addObject:object];
-    
-    return object;
+    return persistentObject;
 }
+
 
 - (void)deletePersistentObjectWithObjectID:(PMObjectID*)objectID
 {
@@ -364,38 +378,6 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             [db executeUpdate:@"DROP TABLE Data"];
             [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, creationDate REAL, updateDate REAL, accessDate REAL)"]; // <-- MODIFIED THIS
             [db executeUpdate:@"CREATE TABLE Data (id INTEGER PRIMARY KEY, data BLOB, FOREIGN KEY(id) REFERENCES Objects(id))"];
-        }
-        @catch (NSException *exception)
-        {
-            succeed = NO;
-            
-            if ([exception.name isEqualToString:PMSQLiteStoreUpdateException])
-                *rollback = YES;
-            else
-                @throw exception;
-        }
-    }];
-    
-    return succeed;
-}
-
-- (BOOL)pmd_insertEmptyPersistentObject:(PMSQLiteObject*)object
-{
-    __block BOOL succeed = YES;
-    
-    [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
-        
-        @try
-        {
-            if (![db executeUpdate:@"INSERT INTO Objects (type, creationDate) values (?, ?)", object.objectID.type, @([[NSDate date] timeIntervalSince1970])])
-                @throw UpdateException;
-            
-            sqlite_int64 dbID = db.lastInsertRowId;
-            object.objectID.dbID = (long)dbID;
-            object.objectID.temporaryID = NO;
-            
-            if(![db executeUpdate:@"INSERT INTO Data (id) values (?)", @(dbID)])
-                @throw UpdateException;
         }
         @catch (NSException *exception)
         {

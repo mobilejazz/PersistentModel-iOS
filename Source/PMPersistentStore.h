@@ -97,12 +97,11 @@ extern NSString * const PMPersistentStoreObjectKey;
 
 /**
  * Creates a new persistent object and returns it for a model object key and type.
- * @param key The model object identifier. Cannot be nil.
  * @param type The model object type. Cannot be nil.
- * @return The persistent object.
- * @discussion If already exists an object with the given key, this method raises a NSInvalidArgumentException exception with the existent object in the userInfo exception field (accessible via the key `PMPersistentStoreObjectKey`). In order to persist changes it is needed to call the method `save`.
+ * @return The empty persistent object.
+ * @discussion If already exists an object with the given key, this method raises a NSInvalidArgumentException exception with the existent object in the userInfo exception field (accessible via the key `PMPersistentStoreObjectKey`).
  **/
-- (id<PMPersistentObject>)createPersistentObjectOfType:(NSString*)type;
+- (id<PMPersistentObject>)createNewEmptyPersistentObjectWithType:(NSString*)type;
 
 /**
  * Removes a persistent object from the store.

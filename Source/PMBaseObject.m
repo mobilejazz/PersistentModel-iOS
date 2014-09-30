@@ -25,6 +25,7 @@
 #import "PMBaseObject.h"
 #import "PMBaseObject+PrivateMethods.h"
 
+#import "PMBaseObject_Private.h"
 #import "PMObjectID_Private.h"
 #import "PMObjectContext.h"
 
@@ -33,7 +34,7 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 
 @implementation PMBaseObject
 {
-    PMObjectID *_objectID;
+
 }
 
 - (id)init
@@ -70,7 +71,7 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
-{
+{    
     NSArray *persistentKeys = [self.class pmd_allPersistentPropertyNames];
     
     for (NSString *key in persistentKeys)
@@ -91,11 +92,6 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 //}
 
 #pragma mark Public Methods
-
-- (PMObjectID*)objectID
-{
-    return _objectID;
-}
 
 //+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
 //{
