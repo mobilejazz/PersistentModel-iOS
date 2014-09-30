@@ -76,7 +76,6 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
     [aCoder encodeObject:_type forKey:@"type"];
 }
 
-
 - (BOOL)isEqual:(id)object
 {
     if ([object isKindOfClass:self.class])
@@ -91,6 +90,11 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
 - (NSUInteger)hash
 {
     return self.URIRepresentation.hash;
+}
+
+- (NSString*)description
+{
+    return [NSString stringWithFormat:@"<%@ : %@>", [super description], self.URIRepresentation];
 }
 
 #pragma mark Properties

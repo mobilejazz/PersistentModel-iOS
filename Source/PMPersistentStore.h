@@ -24,7 +24,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol PMPersistentObject;
+@class PMPersistentObject;
 
 /**
  * Multiples deleting options.
@@ -86,7 +86,7 @@ extern NSString * const PMPersistentStoreObjectKey;
  * @param dbID The model object identifier.
  * @return The associated persistent object or nil.
  **/
-- (id<PMPersistentObject>)persistentObjectWithID:(NSInteger)dbID;
+- (PMPersistentObject*)persistentObjectWithID:(NSInteger)dbID;
 
 /**
  * This method queries all stored objects for the given type.
@@ -101,7 +101,7 @@ extern NSString * const PMPersistentStoreObjectKey;
  * @return The empty persistent object.
  * @discussion If already exists an object with the given key, this method raises a NSInvalidArgumentException exception with the existent object in the userInfo exception field (accessible via the key `PMPersistentStoreObjectKey`).
  **/
-- (id<PMPersistentObject>)createNewEmptyPersistentObjectWithType:(NSString*)type;
+- (PMPersistentObject*)createNewEmptyPersistentObjectWithType:(NSString*)type;
 
 /**
  * Removes a persistent object from the store.

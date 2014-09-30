@@ -6,20 +6,16 @@
 //  Copyright (c) 2014 Joan Martin. All rights reserved.
 //
 
-#import "PMBaseObject.h"
+#import <Foundation/Foundation.h>
+#import "PersistentModel.h"
 
 @class PMUser;
 
 @interface PMVideo : PMBaseObject
 
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSString *about;
 
-@property (nonatomic, assign) NSInteger likesCount;
-@property (nonatomic, assign) NSInteger viewsCount;
-
-@property (nonatomic, strong) NSString *uploaderKey;
-@property (nonatomic, strong) NSArray *participantsKeys;
+@property (nonatomic, strong) PMObjectID *uploaderID;
 
 - (PMUser*)uploader;
 

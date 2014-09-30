@@ -14,18 +14,14 @@
 + (NSArray*)pmd_persistentPropertyNames
 {
     return @[mjz_key(title),
-             mjz_key(about),
-             mjz_key(likesCount),
-             mjz_key(viewsCount),
-             mjz_key(uploaderKey),
-             mjz_key(participantsKeys),
+             mjz_key(uploaderID),
              ];
 }
 
 - (PMUser*)uploader
 {
-    if (_uploaderKey)
-        return [PMUser objectWithKey:_uploaderKey inContext:self.context allowsCreation:NO];
+    if (_uploaderID)
+        return [self.context objectForObjectID:_uploaderID];
     
     return nil;
 }

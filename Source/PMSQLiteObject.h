@@ -24,14 +24,12 @@
 
 #import <Foundation/Foundation.h>
 #import "PMPersistentObject.h"
-
-#import "PMObjectID.h"
-@class PMSQLiteStore;
+#import "PMSQLiteStore.h"
 
 /**
  * This class represents the PersistentObject for a SQLite storage.
  **/
-@interface PMSQLiteObject : NSObject <PMPersistentObject>
+@interface PMSQLiteObject : PMPersistentObject
 
 
 /** ---------------------------------------------------------------- **
@@ -41,33 +39,24 @@
 /**
  * Initializer to identify the current PersistentObject to a database entry.
  * @param dbID The database identifeir.
+ * @param type The type of the data.
  * @return The initialized instance.
  **/
-- (id)initWithObjectID:(PMObjectID*)objectID;
+- (id)initWithID:(NSInteger)dbID type:(NSString*)type;
 
 /** ---------------------------------------------------------------- **
  *  @name Main Attributes
- ** ---------------------------------------------------------------- **/
-
-// *** PMPersistentObject ************************* //
-@property (nonatomic, strong) PMObjectID *objectID;
-@property (nonatomic, strong) NSData *data;
-@property (nonatomic, strong) NSDate *lastUpdate;
-// ************************************************ //
-
-/**
- * This property track changes of the current PersistentObject.
- **/
-@property (nonatomic, assign, readonly) BOOL hasChanges;
-
-
-/** ---------------------------------------------------------------- **
- *  @name Persistent Store Management
  ** ---------------------------------------------------------------- **/
 
 /**
  * Weak reference to the persistent store the current object is related to.
  **/
 @property (nonatomic, weak) PMSQLiteStore *persistentStore;
+
+/**
+ * This property track changes of the current PersistentObject.
+ **/
+@property (nonatomic, assign, readonly) BOOL hasChanges;
+
 
 @end

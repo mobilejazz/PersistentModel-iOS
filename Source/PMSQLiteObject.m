@@ -32,15 +32,16 @@
 
 - (id)init
 {
-    return [self initWithObjectID:nil];
+    return [self initWithID:NSNotFound type:nil];
 }
 
-- (id)initWithObjectID:(PMObjectID*)objectID
+- (id)initWithID:(NSInteger)dbID type:(NSString*)type
 {
     self = [super init];
     if (self)
     {
-        _objectID = objectID;
+        self.dbID = dbID;
+        self.type = type;
         _hasChanges = NO;
     }
     return self;
@@ -48,7 +49,7 @@
 
 - (NSString*)description
 {
-    return [NSString stringWithFormat:@"%@: <id:%@> <lastUpdate:%@> <dataLength:%ld>",[super description], _objectID.URIRepresentation, _lastUpdate.description, (long)_data.length];
+    return [NSString stringWithFormat:@"%@: <id:%ld> <type:%@> <lastUpdate:%@> <dataLength:%ld>",[super description], (long)self.dbID, self.type, self.lastUpdate.description, (long)self.data.length];
 }
 
 - (BOOL)isEqual:(id)object
@@ -56,7 +57,7 @@
     if ([object isKindOfClass:[self class]])
     {
         PMSQLiteObject *sqlObject = object;
-        return [_objectID isEqual:sqlObject.objectID];
+        return self.dbID == sqlObject.dbID && self.dbID != NSNotFound;
     }
     
     return NO;
@@ -64,7 +65,7 @@
 
 - (NSUInteger)hash
 {
-    return _objectID.hash;
+    return @(self.dbID).hash;
 }
 
 #pragma mark Properties
@@ -74,25 +75,21 @@
     _hasChanges = hasChanges;
     
     if (_hasChanges)
-        [_persistentStore pmd_didChangePersistentObject:self];
+        [self.persistentStore pmd_didChangePersistentObject:self];
 }
 
 - (void)setLastUpdate:(NSDate *)lastUpdate
 {
-    BOOL sameValue = [_lastUpdate isEqual:lastUpdate];
-    
-    _lastUpdate = lastUpdate;
-    
+    BOOL sameValue = [self.lastUpdate isEqual:lastUpdate];
+    [super setLastUpdate:lastUpdate];
     [self pmd_setHasChanges:_hasChanges || !sameValue];
 }
 
 - (void)setData:(NSData *)data
 {
-    BOOL didChange = ![_data isEqualToData:data];
-    
-    _data = data;
-    
-    [self pmd_setHasChanges:_hasChanges || didChange];
+    BOOL sameValue = [self.data isEqualToData:data];
+    [super setData:data];
+    [self pmd_setHasChanges:_hasChanges || !sameValue];
 }
 
 #pragma mark Key Value Coding

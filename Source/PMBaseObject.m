@@ -33,9 +33,6 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 
 
 @implementation PMBaseObject
-{
-
-}
 
 - (id)init
 {
@@ -49,7 +46,8 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
     {
         _objectID = nil;
         _hasChanges = NO;
-        [_context insertObject:self];
+        
+        [context insertObject:self];
     }
     return self;
 }

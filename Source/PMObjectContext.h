@@ -82,7 +82,7 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  * @return The persistent instance associated to the given key.
  * @discussion The method returns the "living instance" of the object if already awaked, otherwase it awakes from the persistence layer the object and returns it. If the object has never been created, returns nil.
  **/
-- (PMBaseObject*)objectForObjectID:(PMObjectID*)objectID;
+- (id)objectForObjectID:(PMObjectID*)objectID;
 
 /**
  * Call this method to check the existence of an object for a given key in the current context (living instances).

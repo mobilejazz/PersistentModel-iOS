@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Joan Martin. All rights reserved.
 //
 
-#import "PMBaseObject.h"
+#import <Foundation/Foundation.h>
+#import "PersistentModel.h"
 
 @interface PMUser : PMBaseObject
 

@@ -91,7 +91,7 @@ static NSInteger kContextIDCount = 0;
 
 #pragma mark Public Methods
 
-- (PMBaseObject*)objectForObjectID:(PMObjectID*)objectID
+- (id)objectForObjectID:(PMObjectID*)objectID
 {
     PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
     
@@ -121,10 +121,16 @@ static NSInteger kContextIDCount = 0;
         return NO;
     }
     
+    if (object.context != nil)
+    {
+        NSString *reason = @"You cannot insert an object to two contexts at same time.";
+        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+        [exception raise];
+        return NO;
+    }
+    
     if ([self containsObjectWithObjectID:object.objectID])
         return NO;
-    
-    
     
     if (object.objectID == nil)
     {
@@ -153,6 +159,7 @@ static NSInteger kContextIDCount = 0;
         
     _hasChanges = YES;
     
+    object.context = self;
     [_objects setObject:object forKey:object.objectID.URIRepresentation];
     
     return YES;
@@ -208,7 +215,7 @@ static NSInteger kContextIDCount = 0;
             {
                 shouldSaveCoreDataContext = YES;
                 [self pmd_createPersistentModelObjectForBaseObject:object];
-                object.hasChanges = NO;
+                object.hasChanges = YES;
                 [savedObjects addObject:object];
             }
         }
@@ -318,9 +325,9 @@ static NSInteger kContextIDCount = 0;
     
     NSMutableArray *array = [NSMutableArray array];
     
-    for (id <PMPersistentObject> mo in result)
+    for (PMPersistentObject *mo in result)
     {
-        PMBaseObject *baseObject = [_objects objectForKey:mo.objectID.URIRepresentation];
+        PMBaseObject *baseObject = [_objects objectForKey:@(mo.dbID)];
         
         if (!baseObject)
         {
@@ -346,7 +353,7 @@ static NSInteger kContextIDCount = 0;
     [archiver encodeRootObject:baseObject];
     [archiver finishEncoding];
     
-    id<PMPersistentObject> object = [_persistentStore persistentObjectWithID:baseObject.objectID.dbID];
+    PMPersistentObject *object = [_persistentStore persistentObjectWithID:baseObject.objectID.dbID];
     
     NSAssert(object != nil, @"Object should not be nil");
     
@@ -361,16 +368,18 @@ static NSInteger kContextIDCount = 0;
 {
     NSAssert(baseObject.objectID.temporaryID == YES, @"Object must be temporary");
     
-    id <PMPersistentObject> persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
+    PMPersistentObject *persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
     
     [_objects removeObjectForKey:baseObject.objectID.URIRepresentation];
-    baseObject.objectID = persistentObject.objectID;
+    baseObject.objectID.dbID = persistentObject.dbID;
+    baseObject.objectID.temporaryID = NO;
+    baseObject.objectID.persistentStore = _persistentStore;
     [_objects setObject:baseObject forKey:baseObject.objectID.URIRepresentation];
 }
 
 - (PMBaseObject*)pmd_baseObjectFromPersistentStoreWithObjectID:(PMObjectID*)objectID
 {
-    id<PMPersistentObject> object = [_persistentStore persistentObjectWithID:objectID.dbID];
+    PMPersistentObject *object = [_persistentStore persistentObjectWithID:objectID.dbID];
     
     if (object)
     {
@@ -384,18 +393,18 @@ static NSInteger kContextIDCount = 0;
     return nil;
 }
 
-- (PMBaseObject*)pmd_baseObjectFromModelObject:(id<PMPersistentObject>)modelObject
+- (PMBaseObject*)pmd_baseObjectFromModelObject:(PMPersistentObject*)persistentObject
 {    
-    NSAssert(modelObject != nil, @"ModelObject should not be nil");
-    NSAssert(modelObject.objectID.temporaryID == NO, @"Model Object cannot be temprary");
+    NSAssert(persistentObject != nil, @"Peristent object should not be nil");
+    NSAssert(persistentObject.dbID != NSNotFound, @"Persistent object must have a database identifier");
     
-    NSData *data = modelObject.data;
+    NSData *data = persistentObject.data;
     
     NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     
     PMBaseObject *baseObject = [unarchiver decodeObject];
-    baseObject.objectID = modelObject.objectID;
-    baseObject.lastUpdate = modelObject.lastUpdate;
+    baseObject.objectID = [[PMObjectID alloc] initWithDbID:persistentObject.dbID type:persistentObject.type persistentStore:persistentObject.persistentStore];
+    baseObject.lastUpdate = persistentObject.lastUpdate;
     
     return baseObject;
 }

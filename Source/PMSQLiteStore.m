@@ -30,7 +30,6 @@
 #import "FMDatabaseQueue.h"
 #import "FMResultSet.h"
 
-#import "PMObjectID_Private.h"
 #import "PMSQLiteObject_Private.h"
 
 static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateException";
@@ -42,7 +41,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     FMDatabaseQueue *_dbQueue;
     NSMutableDictionary *_dictionary;
     
-    NSMutableSet *_insertedObjects;
+//    NSMutableSet *_insertedObjects;
     NSMutableSet *_deletedObjects;
     NSMutableSet *_updatedObjects;
 }
@@ -54,7 +53,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     {
         _dictionary = [NSMutableDictionary dictionary];
         
-        _insertedObjects = [NSMutableSet set];
+//        _insertedObjects = [NSMutableSet set];
         _deletedObjects = [NSMutableSet set];
         _updatedObjects = [NSMutableSet set];
         
@@ -81,25 +80,23 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
 #pragma mark Super Methods
 
-- (id<PMPersistentObject>)persistentObjectWithObjectID:(PMObjectID*)objectID
+- (id)persistentObjectWithID:(NSInteger)dbID
 {
-    if (objectID.isTemporaryID)
+    if (dbID == NSNotFound)
         return nil;
     
-    __block PMSQLiteObject *persistentObject = [_dictionary objectForKey:objectID.URIRepresentation];
+    __block PMSQLiteObject *persistentObject = [_dictionary objectForKey:@(dbID)];
     
     if (!persistentObject)
     {
         [_dbQueue inDatabase:^(FMDatabase *db) {
-            FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.id = %ld", objectID.dbID];
+            FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.id = %ld", (long)dbID];
             
             if ([resultSet next])
             {
-                PMObjectID *objectID = [[PMObjectID alloc] initWithDbID:[resultSet intForColumnIndex:0]
-                                                                   type:[resultSet stringForColumnIndex:1]
-                                                        persistentStore:self];
+                persistentObject = [[PMSQLiteObject alloc] initWithID:[resultSet intForColumnIndex:0]
+                                                                 type:[resultSet stringForColumnIndex:1]];
                 
-                persistentObject = [[PMSQLiteObject alloc] initWithObjectID:objectID];
                 persistentObject.lastUpdate = [NSDate dateWithTimeIntervalSince1970:[resultSet doubleForColumnIndex:2]];
                 persistentObject.data = [resultSet dataForColumnIndex:3];
                 
@@ -110,11 +107,11 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         }];
         
         if (persistentObject)
-            [_dictionary setObject:persistentObject forKey:@(persistentObject.objectID.dbID)];
+            [_dictionary setObject:persistentObject forKey:@(persistentObject.dbID)];
     }
     
     if (persistentObject)
-        [self pmd_didAccessObjectWithID:persistentObject.objectID.dbID];
+        [self pmd_didAccessObjectWithID:persistentObject.dbID];
     
     return persistentObject;
 }
@@ -140,18 +137,15 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         
         while ([resultSet next])
         {
-            PMObjectID *objectID = [[PMObjectID alloc] initWithDbID:[resultSet intForColumnIndex:0]
-                                                               type:[resultSet stringForColumnIndex:1]
-                                                    persistentStore:self];
+            PMSQLiteObject *persistentObject = [[PMSQLiteObject alloc] initWithID:[resultSet intForColumnIndex:0]
+                                                                             type:[resultSet stringForColumnIndex:1]];
             
-            PMSQLiteObject *persistentObject = [[PMSQLiteObject alloc] initWithObjectID:objectID];
             persistentObject.lastUpdate = [NSDate dateWithTimeIntervalSince1970:[resultSet doubleForColumnIndex:2]];
             persistentObject.data = [resultSet dataForColumnIndex:3];
-            
             persistentObject.persistentStore = self;
             
             [array addObject:persistentObject];
-            [dbIDs addObject:@(persistentObject.objectID.dbID)];
+            [dbIDs addObject:@(persistentObject.dbID)];
         }
         
         [resultSet close];
@@ -176,8 +170,8 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             
             sqlite_int64 dbID = db.lastInsertRowId;
             
-            PMObjectID *objectID = [[PMObjectID alloc] initWithDbID:dbID type:type persistentStore:self];
-            persistentObject = [[PMSQLiteObject alloc] initWithObjectID:objectID];
+            persistentObject = [[PMSQLiteObject alloc] initWithID:dbID type:type];
+            persistentObject.persistentStore = self;
             
             if(![db executeUpdate:@"INSERT INTO Data (id) values (?)", @(dbID)])
                 @throw UpdateException;
@@ -197,18 +191,19 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 }
 
 
-- (void)deletePersistentObjectWithObjectID:(PMObjectID*)objectID
+- (void)deletePersistentObjectWithID:(NSInteger)dbID
 {
-    PMSQLiteObject *object = [self persistentObjectWithObjectID:objectID];
+    PMSQLiteObject *object = (PMSQLiteObject*)[self persistentObjectWithID:dbID];
     
-    [_dictionary removeObjectForKey:@(objectID.dbID)];
+    [_dictionary removeObjectForKey:@(dbID)];
     
     // If the object is queued to be inserted, remove from the queue.
-    if ([_insertedObjects containsObject:object])
-        [_insertedObjects removeObject:object];
+//    if ([_insertedObjects containsObject:object])
+//        [_insertedObjects removeObject:object];
     
     // If the object is queued to save changeds, remove form the queue and add to deleted objects list.
-    else if ([_updatedObjects containsObject:object])
+    /*else*/
+    if ([_updatedObjects containsObject:object])
     {
         [_updatedObjects removeObject:object];
         [_deletedObjects addObject:object];
@@ -315,8 +310,8 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     
     @synchronized(self)
     {
-        NSMutableSet *insertedObjects = [_insertedObjects copy];
-        [_insertedObjects removeAllObjects];
+//        NSMutableSet *insertedObjects = [_insertedObjects copy];
+//        [_insertedObjects removeAllObjects];
         
         NSMutableSet *deletedObjects = [_deletedObjects copy];
         [_deletedObjects removeAllObjects];
@@ -326,11 +321,11 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         
         
         // -- Inserted Objects -- //
-        for (PMSQLiteObject *object in insertedObjects)
-        {
-            BOOL flag = [self pmd_insertPersistentObject:object];
-            success = success || flag;
-        }
+//        for (PMSQLiteObject *object in insertedObjects)
+//        {
+//            BOOL flag = [self pmd_insertPersistentObject:object];
+//            success = success || flag;
+//        }
         
         // -- Deleted Objects -- //
         for (PMSQLiteObject *object in deletedObjects)
@@ -363,7 +358,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
 - (void)pmd_didChangePersistentObject:(PMSQLiteObject*)object
 {
-    if (object.objectID.isTemporaryID == NO)
+    if (object.dbID != NSNotFound)
         [_updatedObjects addObject:object];
 }
 
@@ -402,7 +397,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         @try
         {
             if (![db executeUpdate:@"INSERT INTO Objects (type, creationDate, updateDate, accessDate) values (?, ?, ?, ?, ?)",
-                 object.objectID.type,
+                 object.type,
                  @([[NSDate date] timeIntervalSince1970]),
                  object.lastUpdate,
                  object.lastUpdate
@@ -410,10 +405,9 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
                 @throw UpdateException;
             
             sqlite_int64 dbID = db.lastInsertRowId;
-            object.objectID.dbID = (long)dbID;
-            object.objectID.temporaryID = NO;
+            object.dbID = (long)dbID;
             
-            if(![db executeUpdate:@"INSERT INTO Data (id, data) values (?, ?)", @(dbID), object.data])
+            if(![db executeUpdate:@"INSERT INTO Data (id, data) values (?, ?)", dbID, object.data])
                 @throw UpdateException;
         }
         @catch (NSException *exception)
@@ -432,17 +426,20 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
 - (BOOL)pmd_updatePersistentObject:(PMSQLiteObject*)object
 {
-    NSAssert(object.objectID.isTemporaryID == NO, @"PersistentObject must have a non temprary object ID");
+    NSAssert(object.dbID != NSNotFound, @"PersistentObject must have a database ID");
     
     __block BOOL succeed = YES;
     
     [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try
         {
-            if (![db executeUpdate:@"UPDATE Objects SET updateDate = ? WHERE id = ?", object.lastUpdate, @(object.objectID.dbID)])
-                @throw UpdateException;
+            if (object.lastUpdate != nil)
+            {
+                if (![db executeUpdate:@"UPDATE Objects SET updateDate = ? WHERE id = ?", object.lastUpdate, @(object.dbID)])
+                    @throw UpdateException;
+            }
             
-            if(![db executeUpdate:@"UPDATE Data SET data = ? WHERE id = ?", object.data, @(object.objectID.dbID)])
+            if(![db executeUpdate:@"UPDATE Data SET data = ? WHERE id = ?", object.data, @(object.dbID)])
                 @throw UpdateException;
         }
         @catch (NSException *exception)
@@ -466,10 +463,10 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try
         {
-            if (![db executeUpdate:@"DELETE FROM Data WHERE id = ?", @(object.objectID.dbID)])
+            if (![db executeUpdate:@"DELETE FROM Data WHERE id = ?", object.dbID])
                 @throw UpdateException;
 
-            if (![db executeUpdate:@"DELETE FROM Objects WHERE id = ?", @(object.objectID.dbID)])
+            if (![db executeUpdate:@"DELETE FROM Objects WHERE id = ?", object.dbID])
                 @throw UpdateException;
         }
         @catch (NSException *exception)

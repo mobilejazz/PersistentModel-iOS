@@ -35,6 +35,8 @@ NSURL* applicationCacheDirectory();
 {
     NSURL *url = [applicationCacheDirectory() URLByAppendingPathComponent:@"PersistentStorage.sql"];
     
+    NSLog(@"%@", url);
+    
 //    [[NSFileManager defaultManager] removeItemAtURL:url error:nil]; // <------ COMMENT AND UNCOMMENT THIS LINE TO DELETE THE PERSISTENT STORAGE
     
     // Creating the persistent store
@@ -43,32 +45,34 @@ NSURL* applicationCacheDirectory();
     // Creating an object context connected to the above persistent store
     PMObjectContext *objectContext = [[PMObjectContext alloc] initWithPersistentStore:persistentStore];
     
-    // Lets check if the user exist in the persistent layer.
-    PMUser *user = [PMUser objectWithKey:@"user-1" inContext:objectContext allowsCreation:NO];
+    NSArray *videos = [objectContext objectsOfClass:PMVideo.class];
     
-    if (user)
+    NSLog(@"VIDEOS: %@", videos.description);
+    
+    if (videos.count == 0)
     {
-        NSLog(@"Found user in persistent storage: %@", user.description);
+        PMUser *user = [[PMUser alloc] initAndInsertToContext:objectContext];
+        user.username = @"Saul";
+        
+        PMVideo *video = [[PMVideo alloc] initAndInsertToContext:objectContext];
+        video.title = @"My Best Video";
+        video.uploaderID = user.objectID;
+        
+        NSLog(@"1 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
+        NSLog(@"1 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
+    
+        [objectContext saveWithCompletionBlock:^(BOOL succeed) {
+            NSLog(@"2 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
+            NSLog(@"2 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
+        }];
     }
     else
     {
-        NSLog(@"User not found in persistent storage ==> Lets create a user and save it!");
+        PMVideo *video = videos.firstObject;
+        PMUser *user = video.uploader;
         
-        // If it doesn't exist, lets create a new user for that key.
-        user = [PMUser objectWithKey:@"user-1" inContext:objectContext allowsCreation:YES];
-        
-        user.username = @"john.doe";
-        user.age = 25;
-        user.avatarURL = [NSURL URLWithString:@"http://www.twitter.com/john.doe"];
-        
-        // Flag changes on user! Otherwise won't be saved!
-        user.hasChanges = YES;
-        
-        NSLog(@"Saving user: %@", user.description);
-        
-        [objectContext save];
-        
-        NSLog(@"Saved!");
+        NSLog(@"VIDEO: %@", video.title);
+        NSLog(@"USER: %@", user.username);
     }
 }
 

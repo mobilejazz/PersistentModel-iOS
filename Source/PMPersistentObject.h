@@ -25,25 +25,36 @@
 #import <Foundation/Foundation.h>
 
 @class PMObjectID;
+@class PMPersistentStore;
 
 /**
  * Persistent objects must implement this protocol to adopt the required schema: `key` (String), `type` (String), `lastUpdate` (Date) and `data` (BLOB).
  **/
-@protocol PMPersistentObject <NSObject>
+@interface PMPersistentObject : NSObject
 
 /**
  * Used to identify the model object.
  **/
-@property (nonatomic, strong) PMObjectID *objectID;
+@property (nonatomic, assign) NSInteger dbID;
+
+/**
+ * The type of the binary data.
+ **/
+@property (nonatomic, strong) NSString *type;
 
 /**
  * Used to retrieve the last update of the model object.
  **/
-@property (nonatomic) NSDate *lastUpdate;
+@property (nonatomic, strong) NSDate *lastUpdate;
 
 /**
  * Used to store the model object data.
  **/
-@property (nonatomic) NSData *data;
+@property (nonatomic, strong) NSData *data;
+
+/**
+ * The associated persistent store.
+ **/
+@property (nonatomic, weak) PMPersistentStore *persistentStore;
 
 @end
