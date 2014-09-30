@@ -49,15 +49,6 @@ extern NSString * const PMBaseObjectNilKeyException;
  **/
 - (id)initAndInsertToContext:(PMObjectContext*)context;
 
-///**
-// * Default static method for creating an object.
-// * @param key The key to identify the created object. This key has to be unique for the given context and cannot be nil.
-// * @param context The context to register the object. Can be nil.
-// * @param flag If NO, this method will return only previously created objects and won't create new instances for the given key.
-// * @discussion If initializing the object with a repeated key for the given context, this method retuns nil.
-// **/
-//+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
-
 /** ---------------------------------------------------------------- **
  *  @name Object context management
  ** ---------------------------------------------------------------- **/

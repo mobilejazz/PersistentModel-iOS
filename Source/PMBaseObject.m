@@ -91,29 +91,7 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 
 #pragma mark Public Methods
 
-//+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
-//{
-//    if (key == nil)
-//    {
-//        NSString *reason = [NSString stringWithFormat:@"Trying to fetch an object of type %@ with a nil key.", NSStringFromClass(self)];
-//        NSException *exception = [NSException exceptionWithName:PMBaseObjectNilKeyException reason:reason userInfo:nil];
-//        [exception raise];
-//        return nil;
-//    }
-//    
-//    PMBaseObject *baseObject = [context objectForKey:key];
-//    
-//    if (baseObject)
-//        return baseObject;
-//    
-//    if (flag)
-//    {        
-//        baseObject = [[self alloc] initWithKey:key context:context];
-//        return baseObject;
-//    }
-//    
-//    return nil;
-//}
+
 
 #pragma mark Key Value Coding
 
