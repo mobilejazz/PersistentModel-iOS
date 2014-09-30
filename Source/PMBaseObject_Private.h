@@ -13,4 +13,6 @@
 @property (nonatomic, strong) PMObjectID *objectID;
 @property (nonatomic, weak, readwrite) PMObjectContext *context;
 
++ (NSArray*)pmd_allPersistentPropertyNames;
+
 @end

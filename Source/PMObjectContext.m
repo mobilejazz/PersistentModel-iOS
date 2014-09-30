@@ -24,7 +24,6 @@
 
 #import "PMObjectContext.h"
 
-#import "PMBaseObject+PrivateMethods.h"
 #import "PMPersistentObject.h"
 #import "PMPersistentStore.h"
 #import "PMObjectID_Private.h"
