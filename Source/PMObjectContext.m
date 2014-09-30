@@ -27,6 +27,7 @@
 #import "PMBaseObject+PrivateMethods.h"
 #import "PMPersistentObject.h"
 #import "PMPersistentStore.h"
+#import "PMObjectID_Private.h"
 
 NSString * const PMObjectContextDidSaveNotification = @"PMObjectContextDidSaveNotification";
 NSString * const PMObjectContextSavedObjectsKey = @"PMObjectContextSavedObjectsKey";
@@ -79,19 +80,19 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
 
 #pragma mark Public Methods
 
-- (PMBaseObject*)objectForKey:(NSString*)key
-{    
-    PMBaseObject* object = [_objects valueForKey:key];
+- (PMBaseObject*)objectForObjectID:(PMObjectID*)objectID
+{
+    PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
     
     if (!object)
-        object = [self pmd_baseObjectFromPersistentStoreWithKey:key];
+        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
     
     return object;
 }
 
-- (BOOL)containsObjectWithKey:(NSString*)key
+- (BOOL)containsObjectWithObjectID:(PMObjectID*)objectID
 {
-    return [_objects valueForKey:key] != nil;
+    return [_objects objectForKey:objectID.URIRepresentation] != nil;
 }
 
 - (NSArray*)registeredObjects
@@ -289,7 +290,7 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
     [archiver encodeRootObject:baseObject];
     [archiver finishEncoding];
     
-    id<PMPersistentObject> object = [_persistentStore persistentObjectWithKey:baseObject.key];
+    id<PMPersistentObject> object = [_persistentStore persistentObjectWithID:<#(NSInteger)#>
     
     if (!object)
         object = [_persistentStore createPersistentObjectWithKey:baseObject.key ofType:NSStringFromClass([baseObject class])];
@@ -298,7 +299,7 @@ NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObje
     object.data = data;
 }
 
-- (PMBaseObject*)pmd_baseObjectFromPersistentStoreWithKey:(NSString*)key
+- (PMBaseObject*)pmd_baseObjectFromPersistentStoreWithObjectID:(PMObjectID*)objectID
 {
     id<PMPersistentObject> object = [_persistentStore persistentObjectWithKey:key];
     

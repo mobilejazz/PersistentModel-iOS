@@ -82,11 +82,11 @@ extern NSString * const PMPersistentStoreObjectKey;
 @property (nonatomic, strong, readonly) NSURL *url;
 
 /**
- * This method should retrieve from the store the object with the given key identifier. If the object is not found in the store, return nil.
- * @param key The model object identifier. Cannot be nil.
+ * This method should retrieve from the store the object with the given ID identifier. If the object is not found in the store, return nil.
+ * @param dbID The model object identifier.
  * @return The associated persistent object or nil.
  **/
-- (id<PMPersistentObject>)persistentObjectWithKey:(NSString*)key;
+- (id<PMPersistentObject>)persistentObjectWithID:(NSInteger)dbID;
 
 /**
  * This method queries all stored objects for the given type.
@@ -102,14 +102,14 @@ extern NSString * const PMPersistentStoreObjectKey;
  * @return The persistent object.
  * @discussion If already exists an object with the given key, this method raises a NSInvalidArgumentException exception with the existent object in the userInfo exception field (accessible via the key `PMPersistentStoreObjectKey`). In order to persist changes it is needed to call the method `save`.
  **/
-- (id<PMPersistentObject>)createPersistentObjectWithKey:(NSString*)key ofType:(NSString*)type;
+- (id<PMPersistentObject>)createPersistentObjectOfType:(NSString*)type;
 
 /**
  * Removes a persistent object from the store.
  * @param key The model object identifier. Cannot be nil.
  * @discussion In order to persist changes it is needed to call the method `save`.
  **/
-- (void)deletePersistentObjectWithKey:(NSString*)key;
+- (void)deletePersistentObjectWithID:(NSInteger)dbID;
 
 /**
  * Removes all persistent objects for the given type, date and policy.

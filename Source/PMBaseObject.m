@@ -25,33 +25,29 @@
 #import "PMBaseObject.h"
 #import "PMBaseObject+PrivateMethods.h"
 
+#import "PMObjectID_Private.h"
 #import "PMObjectContext.h"
 
 NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 
 
 @implementation PMBaseObject
+{
+    PMObjectID *_objectID;
+}
 
 - (id)init
 {
-    return [self initWithKey:nil context:nil];
+    return [self initAndInsertToContext:nil];
 }
 
-- (id)initWithKey:(NSString*)key context:(PMObjectContext*)context
+- (id)initAndInsertToContext:(PMObjectContext*)context;
 {
-    if (!key)
-        return nil;
-    
-    if ([context containsObjectWithKey:key])
-        return nil;
-    
     self = [super init];
     if (self)
     {
-        _key = key;
-        _context = context;
+        _objectID = nil;
         _hasChanges = NO;
-        
         [_context insertObject:self];
     }
     return self;
@@ -76,63 +72,54 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     NSArray *persistentKeys = [self.class pmd_allPersistentPropertyNames];
+    
     for (NSString *key in persistentKeys)
         [aCoder encodeObject:[self valueForKey:key] forKey:key];
 }
 
-- (id)copyWithZone:(NSZone *)zone
-{
-    NSMutableData *data = [NSMutableData data];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-    [archiver encodeRootObject:self];
-    [archiver finishEncoding];
-    
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    PMBaseObject *copy = [unarchiver decodeObject];
-    
-    return copy;
-}
-
-#pragma mark KVC Validation
-
-// In case key is a number, we must convert it to an string
-- (BOOL)validateKey:(inout __autoreleasing id *)ioValue error:(out NSError *__autoreleasing *)outError
-{
-    id value = *ioValue;
-    
-    if ([value isKindOfClass:[NSNumber class]])
-    {
-        *ioValue = [NSString stringWithFormat:@"%d", [value intValue]];
-    }
-    
-    return YES;
-}
+//- (id)copyWithZone:(NSZone *)zone
+//{
+//    NSMutableData *data = [NSMutableData data];
+//    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+//    [archiver encodeRootObject:self];
+//    [archiver finishEncoding];
+//    
+//    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+//    PMBaseObject *copy = [unarchiver decodeObject];
+//    
+//    return copy;
+//}
 
 #pragma mark Public Methods
 
-+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
+- (PMObjectID*)objectID
 {
-    if (key == nil)
-    {
-        NSString *reason = [NSString stringWithFormat:@"Trying to fetch an object of type %@ with a nil key.", NSStringFromClass(self)];
-        NSException *exception = [NSException exceptionWithName:PMBaseObjectNilKeyException reason:reason userInfo:nil];
-        [exception raise];
-        return nil;
-    }
-    
-    PMBaseObject *baseObject = [context objectForKey:key];
-    
-    if (baseObject)
-        return baseObject;
-    
-    if (flag)
-    {        
-        baseObject = [[self alloc] initWithKey:key context:context];
-        return baseObject;
-    }
-    
-    return nil;
+    return _objectID;
 }
+
+//+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
+//{
+//    if (key == nil)
+//    {
+//        NSString *reason = [NSString stringWithFormat:@"Trying to fetch an object of type %@ with a nil key.", NSStringFromClass(self)];
+//        NSException *exception = [NSException exceptionWithName:PMBaseObjectNilKeyException reason:reason userInfo:nil];
+//        [exception raise];
+//        return nil;
+//    }
+//    
+//    PMBaseObject *baseObject = [context objectForKey:key];
+//    
+//    if (baseObject)
+//        return baseObject;
+//    
+//    if (flag)
+//    {        
+//        baseObject = [[self alloc] initWithKey:key context:context];
+//        return baseObject;
+//    }
+//    
+//    return nil;
+//}
 
 #pragma mark Key Value Coding
 
@@ -155,26 +142,6 @@ NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 }
 
 #pragma mark Public Methods
-
-- (void)deleteObjectFromContext
-{
-    if (_context != nil)
-    {
-        PMObjectContext *context = _context;
-        _context = nil;
-        [context deleteObject:self];
-    }
-}
-
-- (BOOL)registerToContext:(PMObjectContext*)context
-{
-    if ([context containsObjectWithKey:_key])
-        return NO;
-    
-    _context = context;
-    [_context insertObject:self];
-    return YES;
-}
 
 @end
 

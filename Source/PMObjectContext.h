@@ -26,6 +26,7 @@
 
 @class PMBaseObject;
 @class PMPersistentStore;
+@class PMObjectID;
 
 /**
  * After a successful save, this notification is posted.
@@ -81,14 +82,14 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  * @return The persistent instance associated to the given key.
  * @discussion The method returns the "living instance" of the object if already awaked, otherwase it awakes from the persistence layer the object and returns it. If the object has never been created, returns nil.
  **/
-- (PMBaseObject*)objectForKey:(NSString*)key;
+- (PMBaseObject*)objectForObjectID:(PMObjectID*)objectID;
 
 /**
  * Call this method to check the existence of an object for a given key in the current context (living instances).
  * @param key A unike key identifying the object.
  * @return YES if exists an object with the given key in the current context, otherwise NO.
  **/
-- (BOOL)containsObjectWithKey:(NSString*)key;
+- (BOOL)containsObjectWithObjectID:(PMObjectID*)objectID;
 
 /**
  * This method returns all living instances registered on that context.

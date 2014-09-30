@@ -48,7 +48,7 @@ NSString * const PMPersistentStoreObjectKey = @"PMPersistentStoreObjectKey";
     return self;
 }
 
-- (id<PMPersistentObject>)persistentObjectWithKey:(NSString*)key
+- (id<PMPersistentObject>)persistentObjectWithObjectID:(PMObjectID*)objectID
 {
     // Subclasses must override.
     return nil;
@@ -60,13 +60,13 @@ NSString * const PMPersistentStoreObjectKey = @"PMPersistentStoreObjectKey";
     return nil;
 }
 
-- (id<PMPersistentObject>)createPersistentObjectWithKey:(NSString*)key ofType:(NSString*)type
+- (id<PMPersistentObject>)createPersistentObjectWithID:(NSInteger)dbID ofType:(NSString *)type
 {
     // Subclasses must override.
     return nil;
 }
 
-- (void)deletePersistentObjectWithKey:(NSString*)key
+- (void)deletePersistentObjectWithID:(NSInteger)dbID
 {
     // Subclasses must override.
 }

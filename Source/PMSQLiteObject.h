@@ -25,6 +25,7 @@
 #import <Foundation/Foundation.h>
 #import "PMPersistentObject.h"
 
+#import "PMObjectID.h"
 @class PMSQLiteStore;
 
 /**
@@ -42,31 +43,16 @@
  * @param dbID The database identifeir.
  * @return The initialized instance.
  **/
-- (id)initWithDataBaseIdentifier:(NSInteger)dbID;
-
-/**
- * Use this initializer for init the current PersistentObject when there is not entry created yet into the database.
- * @param key The model object identifier.
- * @param type The model object type.
- * @return The initialized instance.
- **/
-- (id)initWithKey:(NSString*)key andType:(NSString*)type;
-
+- (id)initWithObjectID:(PMObjectID*)objectID;
 
 /** ---------------------------------------------------------------- **
  *  @name Main Attributes
  ** ---------------------------------------------------------------- **/
 
-/**
- * SQLite database identifier.
- **/
-@property (nonatomic, assign) NSInteger dbID;
-
 // *** PMPersistentObject ************************* //
-@property (nonatomic, strong) NSString *key;
-@property (nonatomic, strong) NSString *type;
-@property (nonatomic, strong) NSDate *lastUpdate;
+@property (nonatomic, strong) PMObjectID *objectID;
 @property (nonatomic, strong) NSData *data;
+@property (nonatomic, strong) NSDate *lastUpdate;
 // ************************************************ //
 
 /**

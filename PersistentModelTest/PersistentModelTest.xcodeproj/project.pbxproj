@@ -22,6 +22,7 @@
 		D26C2B4118BFB1CF00E8BE90 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D26C2B4018BFB1CF00E8BE90 /* main.m */; };
 		D26C2B4518BFB1CF00E8BE90 /* PMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D26C2B4418BFB1CF00E8BE90 /* PMAppDelegate.m */; };
 		D26C2B4718BFB1CF00E8BE90 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D26C2B4618BFB1CF00E8BE90 /* Images.xcassets */; };
+		D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986BC19DAB8F300043329 /* PMObjectID.m */; };
 		D754E87AA4B84C06BBF43DCD /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9281106B868B42E48ADF6C46 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +61,9 @@
 		D26C2B4418BFB1CF00E8BE90 /* PMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PMAppDelegate.m; sourceTree = "<group>"; };
 		D26C2B4618BFB1CF00E8BE90 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D26C2B4D18BFB1CF00E8BE90 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		D2C986BB19DAB8F300043329 /* PMObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectID.h; sourceTree = "<group>"; };
+		D2C986BC19DAB8F300043329 /* PMObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMObjectID.m; sourceTree = "<group>"; };
+		D2C986BE19DABBA200043329 /* PMObjectID_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectID_Private.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,9 @@
 				D24565E11967073300C910FA /* PMBaseObject+PrivateMethods.m */,
 				D201AA1018DC75E600E5F26D /* PMObjectContext.h */,
 				D201AA1118DC75E600E5F26D /* PMObjectContext.m */,
+				D2C986BB19DAB8F300043329 /* PMObjectID.h */,
+				D2C986BC19DAB8F300043329 /* PMObjectID.m */,
+				D2C986BE19DABBA200043329 /* PMObjectID_Private.h */,
 				D201AA1218DC75E600E5F26D /* PMPersistentObject.h */,
 				D201AA1318DC75E600E5F26D /* PMPersistentStore.h */,
 				D201AA1418DC75E600E5F26D /* PMPersistentStore.m */,
@@ -189,6 +196,11 @@
 				CLASSPREFIX = PM;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Joan Martin";
+				TargetAttributes = {
+					D26C2B3018BFB1CF00E8BE90 = {
+						DevelopmentTeam = 3VP5WS89TZ;
+					};
+				};
 			};
 			buildConfigurationList = D26C2B2C18BFB1CF00E8BE90 /* Build configuration list for PBXProject "PersistentModelTest" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -266,6 +278,7 @@
 				D201AA1B18DC75E600E5F26D /* PMBaseObject.m in Sources */,
 				D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */,
 				D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */,
+				D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */,
 				D201AA1E18DC75E600E5F26D /* PMPersistentStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -360,6 +373,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PersistentModelTest/PersistentModelTest-Prefix.pch";
 				INFOPLIST_FILE = "PersistentModelTest/PersistentModelTest-Info.plist";
@@ -374,6 +388,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PersistentModelTest/PersistentModelTest-Prefix.pch";
 				INFOPLIST_FILE = "PersistentModelTest/PersistentModelTest-Info.plist";

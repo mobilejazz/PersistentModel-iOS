@@ -24,6 +24,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class PMObjectID;
+
 /**
  * Persistent objects must implement this protocol to adopt the required schema: `key` (String), `type` (String), `lastUpdate` (Date) and `data` (BLOB).
  **/
@@ -32,12 +34,7 @@
 /**
  * Used to identify the model object.
  **/
-@property (nonatomic, readonly) NSString *key;
-
-/**
- * Used to identify the type of the model object.
- **/
-@property (nonatomic, readonly) NSString *type;
+@property (nonatomic, strong) PMObjectID *objectID;
 
 /**
  * Used to retrieve the last update of the model object.

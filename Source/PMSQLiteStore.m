@@ -30,6 +30,7 @@
 #import "FMDatabaseQueue.h"
 #import "FMResultSet.h"
 
+#import "PMObjectID_Private.h"
 #import "PMSQLiteObject_Private.h"
 
 static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateException";
@@ -80,28 +81,25 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
 #pragma mark Super Methods
 
-- (PMSQLiteObject*)persistentObjectWithKey:(NSString*)key
+- (id<PMPersistentObject>)persistentObjectWithObjectID:(PMObjectID*)objectID
 {
-    if (key == nil)
-    {
-        NSString *reason = @"Cannot query for a persistent object with a nil key.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
+    if (objectID.isTemporaryID)
         return nil;
-    }
     
-    __block PMSQLiteObject *persistentObject = [_dictionary valueForKey:key];
+    __block PMSQLiteObject *persistentObject = [_dictionary objectForKey:objectID.URIRepresentation];
     
     if (!persistentObject)
     {
         [_dbQueue inDatabase:^(FMDatabase *db) {
-            FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.key = %@", key];
+            FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.id = %ld", (long)dbID];
             
             if ([resultSet next])
             {
-                persistentObject = [[PMSQLiteObject alloc] initWithDataBaseIdentifier:[resultSet intForColumnIndex:0]];
-                persistentObject.key = key;
-                persistentObject.type = [resultSet stringForColumnIndex:1];
+                PMObjectID *objectID = [[PMObjectID alloc] initWithDbID:[resultSet intForColumnIndex:0]
+                                                                   type:[resultSet stringForColumnIndex:1]
+                                                        persistentStore:self];
+                
+                persistentObject = [[PMSQLiteObject alloc] initWithObjectID:objectID];
                 persistentObject.lastUpdate = [NSDate dateWithTimeIntervalSince1970:[resultSet doubleForColumnIndex:2]];
                 persistentObject.data = [resultSet dataForColumnIndex:3];
                 
@@ -112,11 +110,11 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         }];
         
         if (persistentObject)
-            [_dictionary setValue:persistentObject forKey:key];
+            [_dictionary setObject:persistentObject forKey:@(persistentObject.objectID.dbID)];
     }
     
     if (persistentObject)
-        [self pmd_didAccessObjectWithID:persistentObject.dbID];
+        [self pmd_didAccessObjectWithID:persistentObject.objectID.dbID];
     
     return persistentObject;
 }
@@ -136,44 +134,39 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     NSMutableArray *dbIDs = [NSMutableArray array];
     
     [_dbQueue inDatabase:^(FMDatabase *db) {
-        FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.key, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.type = %@", type];
+        FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.type = %@", type];
         
         array = [NSMutableArray array];
         
         while ([resultSet next])
         {
-            PMSQLiteObject *persistentObject = [[PMSQLiteObject alloc] initWithDataBaseIdentifier:[resultSet intForColumnIndex:0]];
-            persistentObject.key = [resultSet stringForColumnIndex:1];
-            persistentObject.type = [resultSet stringForColumnIndex:2];
-            persistentObject.lastUpdate = [NSDate dateWithTimeIntervalSince1970:[resultSet doubleForColumnIndex:3]];
-            persistentObject.data = [resultSet dataForColumnIndex:4];
+            PMObjectID *objectID = [[PMObjectID alloc] initWithDbID:[resultSet intForColumnIndex:0]
+                                                               type:[resultSet stringForColumnIndex:1]
+                                                    persistentStore:self];
+            
+            PMSQLiteObject *persistentObject = [[PMSQLiteObject alloc] initWithObjectID:objectID];
+            persistentObject.lastUpdate = [NSDate dateWithTimeIntervalSince1970:[resultSet doubleForColumnIndex:2]];
+            persistentObject.data = [resultSet dataForColumnIndex:3];
             
             persistentObject.persistentStore = self;
             
             [array addObject:persistentObject];
-            [dbIDs addObject:@(persistentObject.dbID)];
+            [dbIDs addObject:@(persistentObject.objectID.dbID)];
         }
         
         [resultSet close];
     }];
 
     for (NSNumber *dbID in dbIDs)
-        [self pmd_didAccessObjectWithID:[dbID integerValue]];
+        [self pmd_didAccessObjectWithID:dbID.integerValue];
     
     return array;
 }
 
 
-- (PMSQLiteObject*)createPersistentObjectWithKey:(NSString*)key ofType:(NSString*)type
+- (PMSQLiteObject*)createPersistentObjectOfType:(NSString*)type
 {
-    if (key == nil)
-    {
-        NSString *reason = @"Cannot create a persistent object with a nil key.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return nil;
-    }
-    else if (type == nil)
+    if (type == nil)
     {
         NSString *reason = @"Cannot create a persistent object with a nil type.";
         NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
@@ -181,44 +174,25 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         return nil;
     }
     
-    PMSQLiteObject *existingObject = [self persistentObjectWithKey:key];
-    
-    if (existingObject)
-    {
-        NSString *reason = @"Cannot create a persitent object because it exists already an object with the given key.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:@{PMPersistentStoreObjectKey: existingObject}];
-        [exception raise];
-        return nil;
-    }
-    
-    PMSQLiteObject *object = [[PMSQLiteObject alloc] initWithKey:key andType:type];
+    PMSQLiteObject *object = [[PMSQLiteObject alloc] init];
     object.persistentStore = self;
     
-    [_dictionary setValue:object forKey:key];
+    [_dictionary setObject:object forKey:key];
     [_insertedObjects addObject:object];
     
     return object;
 }
 
-- (void)deletePersistentObjectWithKey:(NSString*)key
+- (void)deletePersistentObjectWithObjectID:(PMObjectID*)objectID
 {
-    if (key == nil)
-    {
-        NSString *reason = @"Cannot delete a persistent object with a nil key.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return;
-    }
+    PMSQLiteObject *object = [self persistentObjectWithObjectID:objectID];
     
-    PMSQLiteObject *object = [self persistentObjectWithKey:key];
-    
-    [_dictionary removeObjectForKey:key];
+    [_dictionary removeObjectForKey:@(objectID.dbID)];
     
     // If the object is queued to be inserted, remove from the queue.
     if ([_insertedObjects containsObject:object])
-    {
         [_insertedObjects removeObject:object];
-    }
+    
     // If the object is queued to save changeds, remove form the queue and add to deleted objects list.
     else if ([_updatedObjects containsObject:object])
     {
@@ -259,25 +233,25 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
     if (type && ! date)
     {
-        query0 = [NSString stringWithFormat:@"SELECT Objects.key FROM Objects WHERE type = \"%@\"",type];
+        query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE type = \"%@\"",type];
         query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\")",type];
         query2 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE type = \"%@\"", type];
     }
     else if (!type && date)
     {
-        query0 = [NSString stringWithFormat:@"SELECT Objects.key FROM Objects WHERE %@ < %f",optionDate, [date timeIntervalSince1970]];
+        query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE %@ < %f", optionDate, [date timeIntervalSince1970]];
         query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE %@ < %f)",optionDate, [date timeIntervalSince1970]];
         query2 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE %@ < %f",optionDate, [date timeIntervalSince1970]];
     }
     else if (type && date)
     {
-        query0 = [NSString stringWithFormat:@"SELECT Objects.key FROM Objects WHERE type = \"%@\" AND %@ < %f)", type, optionDate, [date timeIntervalSince1970]];
+        query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE type = \"%@\" AND %@ < %f)", type, optionDate, [date timeIntervalSince1970]];
         query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\" AND %@ < %f)", type, optionDate, [date timeIntervalSince1970]];
         query2 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE type = \"%@\" AND %@ < %f",type, optionDate, [date timeIntervalSince1970]];
     }
     else //if (!type && !date)
     {
-        query0 = @"SELECT Objects.key FROM Objects";
+        query0 = @"SELECT Objects.id FROM Objects";
         query1 = @"DELETE FROM Data";
         query2 = @"DELETE FROM Objects";
     }
@@ -292,8 +266,8 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             NSMutableArray *keys = [NSMutableArray array];
             while ([resultSet next])
             {
-                NSString *key = [resultSet stringForColumnIndex:0];
-                [keys addObject:key];
+                NSInteger dbID = [resultSet intForColumnIndex:0];
+                [keys addObject:@(dbID)];
             }
             
             [resultSet close];
@@ -375,7 +349,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
 - (void)pmd_didChangePersistentObject:(PMSQLiteObject*)object
 {
-    if (object.dbID != NSNotFound)
+    if (object.objectID.isTemporaryID == NO)
         [_updatedObjects addObject:object];
 }
 
@@ -388,7 +362,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         {
             [db executeUpdate:@"DROP TABLE Objects"];
             [db executeUpdate:@"DROP TABLE Data"];
-            [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT UNIQUE NOT NULL, creationDate REAL, type TEXT, updateDate REAL, accessDate REAL)"];
+            [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, creationDate REAL, updateDate REAL, accessDate REAL)"]; // <-- MODIFIED THIS
             [db executeUpdate:@"CREATE TABLE Data (id INTEGER PRIMARY KEY, data BLOB, FOREIGN KEY(id) REFERENCES Objects(id))"];
         }
         @catch (NSException *exception)
@@ -413,11 +387,12 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         
         @try
         {
-            if (![db executeUpdate:@"INSERT INTO Objects (key, creationDate) values (?, ?)", object.key, @([[NSDate date] timeIntervalSince1970])])
+            if (![db executeUpdate:@"INSERT INTO Objects (type, creationDate) values (?, ?)", object.objectID.type, @([[NSDate date] timeIntervalSince1970])])
                 @throw UpdateException;
             
             sqlite_int64 dbID = db.lastInsertRowId;
-            object.dbID = (long)dbID;
+            object.objectID.dbID = (long)dbID;
+            object.objectID.temporaryID = NO;
             
             if(![db executeUpdate:@"INSERT INTO Data (id) values (?)", @(dbID)])
                 @throw UpdateException;
@@ -444,17 +419,17 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         
         @try
         {
-            if (![db executeUpdate:@"INSERT INTO Objects (key, creationDate, type, updateDate, accessDate) values (?, ?, ?, ?, ?)",
-                 object.key,
+            if (![db executeUpdate:@"INSERT INTO Objects (type, creationDate, updateDate, accessDate) values (?, ?, ?, ?, ?)",
+                 object.objectID.type,
                  @([[NSDate date] timeIntervalSince1970]),
-                 object.type,
                  object.lastUpdate,
                  object.lastUpdate
                  ])
                 @throw UpdateException;
             
             sqlite_int64 dbID = db.lastInsertRowId;
-            object.dbID = (long)dbID;
+            object.objectID.dbID = (long)dbID;
+            object.objectID.temporaryID = NO;
             
             if(![db executeUpdate:@"INSERT INTO Data (id, data) values (?, ?)", @(dbID), object.data])
                 @throw UpdateException;
@@ -475,17 +450,17 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 
 - (BOOL)pmd_updatePersistentObject:(PMSQLiteObject*)object
 {
-    NSAssert(object.dbID != NSNotFound, @"PersistentObject must have a valid database identifier.");
+    NSAssert(object.objectID.isTemporaryID == NO, @"PersistentObject must have a non temprary object ID");
     
     __block BOOL succeed = YES;
     
     [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try
         {
-            if (![db executeUpdate:@"UPDATE Objects SET type = ?, updateDate = ? WHERE id = ?", object.type, object.lastUpdate, @(object.dbID)])
+            if (![db executeUpdate:@"UPDATE Objects SET updateDate = ? WHERE id = ?", object.lastUpdate, @(object.objectID.dbID)])
                 @throw UpdateException;
             
-            if(![db executeUpdate:@"UPDATE Data SET data = ? WHERE id = ?", object.data, @(object.dbID)])
+            if(![db executeUpdate:@"UPDATE Data SET data = ? WHERE id = ?", object.data, @(object.objectID.dbID)])
                 @throw UpdateException;
         }
         @catch (NSException *exception)
@@ -509,10 +484,10 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try
         {
-            if (![db executeUpdate:@"DELETE FROM Data WHERE id = ?", @(object.dbID)])
+            if (![db executeUpdate:@"DELETE FROM Data WHERE id = ?", @(object.objectID.dbID)])
                 @throw UpdateException;
 
-            if (![db executeUpdate:@"DELETE FROM Objects WHERE id = ?", @(object.dbID)])
+            if (![db executeUpdate:@"DELETE FROM Objects WHERE id = ?", @(object.objectID.dbID)])
                 @throw UpdateException;
         }
         @catch (NSException *exception)

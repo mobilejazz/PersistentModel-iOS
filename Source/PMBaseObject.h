@@ -26,6 +26,7 @@
 
 extern NSString * const PMBaseObjectNilKeyException;
 
+@class PMObjectID;
 @class PMObjectContext;
 
 /**
@@ -35,7 +36,7 @@ extern NSString * const PMBaseObjectNilKeyException;
  *   1. Manually encode and decode your properties using the NSCoding protocol methods
  *   2. Override the method `keysForPersistentValues` and return a set of strings with the names of those properties you want to persist. Values will be retrieved using KVC.
  **/
-@interface PMBaseObject : NSObject <NSCoding, NSCopying>
+@interface PMBaseObject : NSObject <NSCoding>
 
 
 /** ---------------------------------------------------------------- **
@@ -44,21 +45,18 @@ extern NSString * const PMBaseObjectNilKeyException;
 
 /**
  * Default init method.
- * @param key The key to identify the created object. This key has to be unique for the given context.
  * @param context The context to register the object. Can be nil.
- * @discussion If initializing the object with an existing key in the given context, this method retuns nil.
  **/
-- (id)initWithKey:(NSString*)key context:(PMObjectContext*)context;
+- (id)initAndInsertToContext:(PMObjectContext*)context;
 
-/**
- * Default static method for creating an object.
- * @param key The key to identify the created object. This key has to be unique for the given context and cannot be nil.
- * @param context The context to register the object. Can be nil.
- * @param flag If NO, this method will return only previously created objects and won't create new instances for the given key.
- * @discussion If initializing the object with a repeated key for the given context, this method retuns nil.
- **/
-+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
-
+///**
+// * Default static method for creating an object.
+// * @param key The key to identify the created object. This key has to be unique for the given context and cannot be nil.
+// * @param context The context to register the object. Can be nil.
+// * @param flag If NO, this method will return only previously created objects and won't create new instances for the given key.
+// * @discussion If initializing the object with a repeated key for the given context, this method retuns nil.
+// **/
+//+ (instancetype)objectWithKey:(NSString *)key inContext:(PMObjectContext*)context allowsCreation:(BOOL)flag;
 
 /** ---------------------------------------------------------------- **
  *  @name Object context management
@@ -70,29 +68,14 @@ extern NSString * const PMBaseObjectNilKeyException;
  **/
 @property (nonatomic, weak, readonly) PMObjectContext *context;
 
-/**
- * In order to delete an object from the context, call this method.
- * @discussion This method invokes automatically the method 'deleteObject' from the registered PMObjectContext.
- **/
-- (void)deleteObjectFromContext;
-
-/**
- * Use this method in order to regsiter a new object to the context.
- * @param context The context to regsiter the current object.
- * @return YES if succeed, otherwise NO.
- * @discussion If another object with the same key is registered in the context, this method will fail to register the new object and return NO. It is responsibility of the user to unregister the object from the current context before calling this method.
- **/
-- (BOOL)registerToContext:(PMObjectContext*)context;
-
-
 /** ---------------------------------------------------------------- **
  *  @name Main Properties
  ** ---------------------------------------------------------------- **/
 
 /** 
- * The unique key that identifies the object
+ * The object ID that identifies the object.
  **/
-@property (nonatomic, strong) NSString *key;
+- (PMObjectID*)objectID;
 
 /** 
  * The date of the last update.

@@ -26,29 +26,21 @@
 
 #import "PMSQLiteStore_Private.h"
 
+#import "PMObjectID_Private.h"
+
 @implementation PMSQLiteObject
 
-- (id)initWithDataBaseIdentifier:(NSInteger)dbID
+- (id)init
 {
-    self = [super init];
-    if (self)
-    {
-        _dbID = dbID;
-        _key = nil;
-        _type = nil;
-        _hasChanges = NO;
-    }
-    return self;
+    return [self initWithObjectID:nil];
 }
 
-- (id)initWithKey:(NSString*)key andType:(NSString *)type
+- (id)initWithObjectID:(PMObjectID*)objectID
 {
     self = [super init];
     if (self)
     {
-        _dbID = NSNotFound;
-        _key = key;
-        _type = type;
+        _objectID = objectID;
         _hasChanges = NO;
     }
     return self;
@@ -56,29 +48,26 @@
 
 - (NSString*)description
 {
-    return [NSString stringWithFormat:@"%@: <id:%ld> <key:%@> <type:%@> <lastUpdate:%@> <dataLength:%ld>",[super description], (long)_dbID, _key, _type, _lastUpdate.description, (long)_data.length];
+    return [NSString stringWithFormat:@"%@: <id:%@> <lastUpdate:%@> <dataLength:%ld>",[super description], _objectID.URIRepresentation, _lastUpdate.description, (long)_data.length];
 }
 
 - (BOOL)isEqual:(id)object
 {
-    if (![object isKindOfClass:[self class]])
-        return NO;
+    if ([object isKindOfClass:[self class]])
+    {
+        PMSQLiteObject *sqlObject = object;
+        return [_objectID isEqual:sqlObject.objectID];
+    }
     
-    return [[(PMSQLiteObject*)object key] isEqualToString:_key];
+    return NO;
 }
 
 - (NSUInteger)hash
 {
-    NSString *string = [NSString stringWithFormat:@"%ld-%@",(long)_dbID, _key];
-    return string.hash;
+    return _objectID.hash;
 }
 
 #pragma mark Properties
-
-- (void)setDbID:(NSInteger)dbID
-{
-    _dbID = dbID;
-}
 
 - (void)pmd_setHasChanges:(BOOL)hasChanges
 {
