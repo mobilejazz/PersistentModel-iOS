@@ -46,6 +46,12 @@ NSURL* applicationCacheDirectory();
     PMObjectContext *objectContext = [[PMObjectContext alloc] initWithPersistentStore:persistentStore];
     
     NSArray *videos = [objectContext objectsOfClass:PMVideo.class];
+
+//    PMVideo *video = [TMVideo objectForQuery:@"me"];
+//    
+//    [TMVideo fectchQuery:@"me" completionBlock:^(NSArray *objects){
+//        
+//    }];
     
     NSLog(@"VIDEOS: %@", videos.description);
     

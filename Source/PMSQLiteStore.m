@@ -41,7 +41,6 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     FMDatabaseQueue *_dbQueue;
     NSMutableDictionary *_dictionary;
     
-//    NSMutableSet *_insertedObjects;
     NSMutableSet *_deletedObjects;
     NSMutableSet *_updatedObjects;
 }
@@ -53,7 +52,6 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     {
         _dictionary = [NSMutableDictionary dictionary];
         
-//        _insertedObjects = [NSMutableSet set];
         _deletedObjects = [NSMutableSet set];
         _updatedObjects = [NSMutableSet set];
         
@@ -173,7 +171,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             persistentObject = [[PMSQLiteObject alloc] initWithID:dbID type:type];
             persistentObject.persistentStore = self;
             
-            if(![db executeUpdate:@"INSERT INTO Data (id) values (?)", @(dbID)])
+            if (![db executeUpdate:@"INSERT INTO Data (id) values (?)", @(dbID)])
                 @throw UpdateException;
         }
         @catch (NSException *exception)
@@ -281,7 +279,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             
             [resultSet close];
             
-            if(![db executeUpdate:query1])
+            if (![db executeUpdate:query1])
                 @throw UpdateException;
             
             if (![db executeUpdate:query2])
@@ -371,7 +369,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         {
             [db executeUpdate:@"DROP TABLE Objects"];
             [db executeUpdate:@"DROP TABLE Data"];
-            [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, creationDate REAL, updateDate REAL, accessDate REAL)"]; // <-- MODIFIED THIS
+            [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, query TEXT, creationDate REAL, updateDate REAL, accessDate REAL)"];
             [db executeUpdate:@"CREATE TABLE Data (id INTEGER PRIMARY KEY, data BLOB, FOREIGN KEY(id) REFERENCES Objects(id))"];
         }
         @catch (NSException *exception)
@@ -407,7 +405,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             sqlite_int64 dbID = db.lastInsertRowId;
             object.dbID = (long)dbID;
             
-            if(![db executeUpdate:@"INSERT INTO Data (id, data) values (?, ?)", dbID, object.data])
+            if (![db executeUpdate:@"INSERT INTO Data (id, data) values (?, ?)", dbID, object.data])
                 @throw UpdateException;
         }
         @catch (NSException *exception)
@@ -439,7 +437,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
                     @throw UpdateException;
             }
             
-            if(![db executeUpdate:@"UPDATE Data SET data = ? WHERE id = ?", object.data, @(object.dbID)])
+            if (![db executeUpdate:@"UPDATE Data SET data = ? WHERE id = ?", object.data, @(object.dbID)])
                 @throw UpdateException;
         }
         @catch (NSException *exception)
@@ -493,7 +491,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try
         {
-            if(![db executeUpdate:@"UPDATE Objects SET accessDate = ? WHERE id = ?", @([[NSDate date] timeIntervalSince1970]), @(dbID)])
+            if (![db executeUpdate:@"UPDATE Objects SET accessDate = ? WHERE id = ?", @([[NSDate date] timeIntervalSince1970]), @(dbID)])
                 @throw UpdateException;
         }
         @catch (NSException *exception)

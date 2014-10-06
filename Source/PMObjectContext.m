@@ -30,6 +30,9 @@
 
 #import "PMBaseObject_Private.h"
 
+#import "PMKeyedArchiver.h"
+#import "PMKeyedUnarchiver.h"
+
 NSString * const PMObjectContextDidSaveNotification = @"PMObjectContextDidSaveNotification";
 NSString * const PMObjectContextSavedObjectsKey = @"PMObjectContextSavedObjectsKey";
 NSString * const PMObjectContextDeletedObjectsKey = @"PMObjectContextDeletedObjectsKey";
@@ -90,7 +93,7 @@ static NSInteger kContextIDCount = 0;
 
 #pragma mark Public Methods
 
-- (id)objectForObjectID:(PMObjectID*)objectID
+- (id)objectRegisteredForID:(PMObjectID*)objectID
 {
     PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
     
@@ -100,9 +103,10 @@ static NSInteger kContextIDCount = 0;
     return object;
 }
 
-- (BOOL)containsObjectWithObjectID:(PMObjectID*)objectID
+- (id)objectWithID:(PMObjectID*)objectID
 {
-    return [_objects objectForKey:objectID.URIRepresentation] != nil;
+    PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
+    return object;
 }
 
 - (NSArray*)registeredObjects
@@ -128,7 +132,7 @@ static NSInteger kContextIDCount = 0;
         return NO;
     }
     
-    if ([self containsObjectWithObjectID:object.objectID])
+    if ([self objectRegisteredForID:object.objectID] != nil)
         return NO;
     
     if (object.objectID == nil)
@@ -348,7 +352,7 @@ static NSInteger kContextIDCount = 0;
     NSAssert(baseObject.objectID.temporaryID == NO, @"Object cannot be temporary");
     
     NSMutableData *data = [NSMutableData data];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+    PMKeyedArchiver *archiver = [[PMKeyedArchiver alloc] initForWritingWithMutableData:data context:self];
     [archiver encodeRootObject:baseObject];
     [archiver finishEncoding];
     
@@ -370,6 +374,8 @@ static NSInteger kContextIDCount = 0;
     PMPersistentObject *persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
     
     [_objects removeObjectForKey:baseObject.objectID.URIRepresentation];
+    
+    
     baseObject.objectID.dbID = persistentObject.dbID;
     baseObject.objectID.temporaryID = NO;
     baseObject.objectID.persistentStore = _persistentStore;
@@ -399,7 +405,7 @@ static NSInteger kContextIDCount = 0;
     
     NSData *data = persistentObject.data;
     
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    PMKeyedUnarchiver *unarchiver = [[PMKeyedUnarchiver alloc] initForReadingWithData:data context:self];
     
     PMBaseObject *baseObject = [unarchiver decodeObject];
     baseObject.objectID = [[PMObjectID alloc] initWithDbID:persistentObject.dbID type:persistentObject.type persistentStore:persistentObject.persistentStore];

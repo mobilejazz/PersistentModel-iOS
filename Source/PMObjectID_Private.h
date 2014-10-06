@@ -10,8 +10,14 @@
 
 @interface PMObjectID ()
 
+/**
+ * Initialize a temporary object ID with its ID and type.
+ **/
 - (id)initWithTempraryID:(NSInteger)temporaryID type:(NSString*)type;
 
+/**
+ * Initialize an final object ID with a given dbID, type and persistent store.
+ **/
 - (id)initWithDbID:(NSInteger)dbID type:(NSString*)type persistentStore:(PMPersistentStore*)persistentStore;
 
 /**

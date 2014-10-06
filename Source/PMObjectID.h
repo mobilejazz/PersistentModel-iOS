@@ -12,6 +12,8 @@
 
 @interface PMObjectID : NSObject <NSCoding>
 
+//+ (PMObjectID*)objectIDWithURI:(NSURL*)uri;
+
 @property (nonatomic, readonly) Class typeClass;
 @property (nonatomic, readonly, getter=isTemporaryID) BOOL temporaryID;
 @property (nonatomic, readonly, strong) PMPersistentStore *persistentStore;

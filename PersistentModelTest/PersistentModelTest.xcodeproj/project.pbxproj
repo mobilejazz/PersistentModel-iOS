@@ -21,6 +21,9 @@
 		D26C2B4118BFB1CF00E8BE90 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D26C2B4018BFB1CF00E8BE90 /* main.m */; };
 		D26C2B4518BFB1CF00E8BE90 /* PMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D26C2B4418BFB1CF00E8BE90 /* PMAppDelegate.m */; };
 		D26C2B4718BFB1CF00E8BE90 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D26C2B4618BFB1CF00E8BE90 /* Images.xcassets */; };
+		D29B88D619E2EBCA00361F24 /* PMKeyedArchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88D519E2EBCA00361F24 /* PMKeyedArchiver.m */; };
+		D29B88D919E2EC5A00361F24 /* PMKeyedUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88D819E2EC5A00361F24 /* PMKeyedUnarchiver.m */; };
+		D29B88DC19E2F0AF00361F24 /* PMFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88DB19E2F0AF00361F24 /* PMFetchRequest.m */; };
 		D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986BC19DAB8F300043329 /* PMObjectID.m */; };
 		D2C986C119DAF56300043329 /* PMPersistentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986C019DAF56300043329 /* PMPersistentObject.m */; };
 		D754E87AA4B84C06BBF43DCD /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9281106B868B42E48ADF6C46 /* libPods.a */; };
@@ -59,6 +62,12 @@
 		D26C2B4418BFB1CF00E8BE90 /* PMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PMAppDelegate.m; sourceTree = "<group>"; };
 		D26C2B4618BFB1CF00E8BE90 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		D26C2B4D18BFB1CF00E8BE90 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		D29B88D419E2EBCA00361F24 /* PMKeyedArchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMKeyedArchiver.h; sourceTree = "<group>"; };
+		D29B88D519E2EBCA00361F24 /* PMKeyedArchiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMKeyedArchiver.m; sourceTree = "<group>"; };
+		D29B88D719E2EC5A00361F24 /* PMKeyedUnarchiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMKeyedUnarchiver.h; sourceTree = "<group>"; };
+		D29B88D819E2EC5A00361F24 /* PMKeyedUnarchiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMKeyedUnarchiver.m; sourceTree = "<group>"; };
+		D29B88DA19E2F0AF00361F24 /* PMFetchRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMFetchRequest.h; sourceTree = "<group>"; };
+		D29B88DB19E2F0AF00361F24 /* PMFetchRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMFetchRequest.m; sourceTree = "<group>"; };
 		D2C986BB19DAB8F300043329 /* PMObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectID.h; sourceTree = "<group>"; };
 		D2C986BC19DAB8F300043329 /* PMObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMObjectID.m; sourceTree = "<group>"; };
 		D2C986BE19DABBA200043329 /* PMObjectID_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectID_Private.h; sourceTree = "<group>"; };
@@ -93,16 +102,10 @@
 				D2C986BB19DAB8F300043329 /* PMObjectID.h */,
 				D2C986BE19DABBA200043329 /* PMObjectID_Private.h */,
 				D2C986BC19DAB8F300043329 /* PMObjectID.m */,
-				D201AA1218DC75E600E5F26D /* PMPersistentObject.h */,
-				D2C986C019DAF56300043329 /* PMPersistentObject.m */,
-				D201AA1318DC75E600E5F26D /* PMPersistentStore.h */,
-				D201AA1418DC75E600E5F26D /* PMPersistentStore.m */,
-				D201AA1518DC75E600E5F26D /* PMSQLiteObject.h */,
-				D201AA1718DC75E600E5F26D /* PMSQLiteObject_Private.h */,
-				D201AA1618DC75E600E5F26D /* PMSQLiteObject.m */,
-				D201AA1818DC75E600E5F26D /* PMSQLiteStore.h */,
-				D201AA1A18DC75E600E5F26D /* PMSQLiteStore_Private.h */,
-				D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */,
+				D29B88DA19E2F0AF00361F24 /* PMFetchRequest.h */,
+				D29B88DB19E2F0AF00361F24 /* PMFetchRequest.m */,
+				D29B88D319E2EB9400361F24 /* Coding */,
+				D29B88D219E2EB8700361F24 /* Persistent Store */,
 			);
 			name = Source;
 			path = ../../Source;
@@ -163,6 +166,34 @@
 				D26C2B4218BFB1CF00E8BE90 /* PersistentModelTest-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D29B88D219E2EB8700361F24 /* Persistent Store */ = {
+			isa = PBXGroup;
+			children = (
+				D201AA1218DC75E600E5F26D /* PMPersistentObject.h */,
+				D2C986C019DAF56300043329 /* PMPersistentObject.m */,
+				D201AA1318DC75E600E5F26D /* PMPersistentStore.h */,
+				D201AA1418DC75E600E5F26D /* PMPersistentStore.m */,
+				D201AA1518DC75E600E5F26D /* PMSQLiteObject.h */,
+				D201AA1718DC75E600E5F26D /* PMSQLiteObject_Private.h */,
+				D201AA1618DC75E600E5F26D /* PMSQLiteObject.m */,
+				D201AA1818DC75E600E5F26D /* PMSQLiteStore.h */,
+				D201AA1A18DC75E600E5F26D /* PMSQLiteStore_Private.h */,
+				D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */,
+			);
+			name = "Persistent Store";
+			sourceTree = "<group>";
+		};
+		D29B88D319E2EB9400361F24 /* Coding */ = {
+			isa = PBXGroup;
+			children = (
+				D29B88D419E2EBCA00361F24 /* PMKeyedArchiver.h */,
+				D29B88D519E2EBCA00361F24 /* PMKeyedArchiver.m */,
+				D29B88D719E2EC5A00361F24 /* PMKeyedUnarchiver.h */,
+				D29B88D819E2EC5A00361F24 /* PMKeyedUnarchiver.m */,
+			);
+			name = Coding;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -270,12 +301,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				D2C986C119DAF56300043329 /* PMPersistentObject.m in Sources */,
+				D29B88DC19E2F0AF00361F24 /* PMFetchRequest.m in Sources */,
 				D201AA2318DC7C6600E5F26D /* PMVideo.m in Sources */,
 				D201AA1D18DC75E600E5F26D /* PMObjectContext.m in Sources */,
 				D201AA1F18DC75E600E5F26D /* PMSQLiteObject.m in Sources */,
 				D26C2B4118BFB1CF00E8BE90 /* main.m in Sources */,
 				D26C2B4518BFB1CF00E8BE90 /* PMAppDelegate.m in Sources */,
+				D29B88D919E2EC5A00361F24 /* PMKeyedUnarchiver.m in Sources */,
 				D201AA1B18DC75E600E5F26D /* PMBaseObject.m in Sources */,
+				D29B88D619E2EBCA00361F24 /* PMKeyedArchiver.m in Sources */,
 				D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */,
 				D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */,
 				D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */,

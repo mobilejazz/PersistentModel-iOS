@@ -8,6 +8,9 @@
 
 #import "PMObjectID_Private.h"
 
+#import "PMKeyedUnarchiver.h"
+#import "PMKeyedArchiver.h"
+
 static NSString * const kPMObjectIDScheme = @"pmoid";
 static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
 
@@ -54,7 +57,12 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+//+ (PMObjectID*)objectIDWithURI:(NSURL*)uri
+//{
+//    return nil;
+//}
+
+- (id)initWithCoder:(PMKeyedArchiver*)aDecoder
 {
     self = [super init];
     if (self)
@@ -63,12 +71,12 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
         _type = [aDecoder decodeObjectForKey:@"type"];
         _temporaryID = NO;
         
-        _persistentStore = nil; // <-- MUST SET THIS LATER!
+        _persistentStore = aDecoder.context.persistentStore;
     }
     return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void)encodeWithCoder:(PMKeyedUnarchiver*)aCoder
 {
     NSAssert(_temporaryID == NO, @"When encoding, the object ID cannot be temporal");
     

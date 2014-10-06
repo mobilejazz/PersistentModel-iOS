@@ -77,19 +77,19 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  ** ---------------------------------------------------------------- **/
 
 /**
- * Returns the object for for the given identifier key.
- * @param key A unique key identifying the object.
- * @return The persistent instance associated to the given key.
- * @discussion The method returns the "living instance" of the object if already awaked, otherwase it awakes from the persistence layer the object and returns it. If the object has never been created, returns nil.
+ * Returns the object for for the given ID, if registered in the context.
+ * @param objectID The ID of the object.
+ * @return The instance associated to the given ID.
  **/
-- (id)objectForObjectID:(PMObjectID*)objectID;
+- (id)objectRegisteredForID:(PMObjectID*)objectID;
 
 /**
- * Call this method to check the existence of an object for a given key in the current context (living instances).
- * @param key A unike key identifying the object.
- * @return YES if exists an object with the given key in the current context, otherwise NO.
+ * Returns the object for for the given ID.
+ * @param objectID The ID of the object.
+ * @return The instance associated to the given ID.
+ * @discussion The method returns the "living instance" of the object if already awaked, otherwase it awakes from the persistence store the object and returns it.
  **/
-- (BOOL)containsObjectWithObjectID:(PMObjectID*)objectID;
+- (id)objectWithID:(PMObjectID*)objectID;
 
 /**
  * This method returns all living instances registered on that context.
