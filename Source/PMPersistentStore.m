@@ -54,9 +54,8 @@ NSString * const PMPersistentStoreObjectKey = @"PMPersistentStoreObjectKey";
     return nil;
 }
 
-- (NSArray*)persistentObjectsOfType:(NSString*)type
+- (NSArray*)persistentObjectsOfType:(NSString *)type index:(NSString*)index offset:(NSInteger)offset limit:(NSInteger)limit
 {
-    // Subclasses must override.
     return nil;
 }
 
@@ -81,6 +80,22 @@ NSString * const PMPersistentStoreObjectKey = @"PMPersistentStoreObjectKey";
 {
     // Subclasses must override.
     return NO;
+}
+
+- (BOOL)addIndex:(PMObjectIndex*)objectIndex toObjectWithID:(NSInteger)dbID
+{
+    return NO;
+}
+
+- (BOOL)deleteIndex:(NSString*)index toObjectWithID:(NSInteger)dbID
+{
+    return NO;
+}
+
+- (NSArray*)indexesForObjectWithID:(NSInteger)dbID
+{
+    // Subclasses must override.
+    return nil;
 }
 
 @end

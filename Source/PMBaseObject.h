@@ -80,6 +80,15 @@ extern NSString * const PMBaseObjectNilKeyException;
  **/
 @property (nonatomic, assign) BOOL hasChanges;
 
+/** ---------------------------------------------------------------- **
+ *  @name Indexing the object
+ ** ---------------------------------------------------------------- **/
+
+- (void)addIndex:(NSString*)index;
+- (void)addIndex:(NSString*)index order:(NSInteger)order;
+- (void)removeIndex:(NSString*)index;
+- (NSArray*)allIndexes;
+
 @end
 
 

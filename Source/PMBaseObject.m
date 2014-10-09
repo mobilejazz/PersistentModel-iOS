@@ -26,7 +26,10 @@
 
 #import "PMBaseObject_Private.h"
 #import "PMObjectID_Private.h"
-#import "PMObjectContext.h"
+#import "PMObjectContext_Private.h"
+
+#import "PMObjectIndex.h"
+
 
 NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
 
@@ -64,6 +67,10 @@ static NSString* stringFromClass(Class theClass)
         _objectID = nil;
         _hasChanges = NO;
         
+        _insertedIndexes = @[];
+        _deletedIndexes = @[];
+        _indexes = nil;
+        
         [context insertObject:self];
     }
     return self;
@@ -74,6 +81,10 @@ static NSString* stringFromClass(Class theClass)
     self = [super init];
     if (self)
     {
+        _insertedIndexes = @[];
+        _deletedIndexes = @[];
+        _indexes = nil;
+        
         NSArray *persistentKeys = [self.class pmd_allPersistentPropertyNames];
         for (NSString *key in persistentKeys)
         {
@@ -126,6 +137,14 @@ static NSString* stringFromClass(Class theClass)
     _hasChanges = YES;
 }
 
+- (NSArray*)indexes
+{
+    if (!_indexes)
+        _indexes = [self.context pmd_fetchIndexesForObjectWithID:self.objectID];
+    
+    return _indexes;
+}
+
 #pragma mark Private Methods
 
 + (NSArray*)pmd_allPersistentPropertyNames
@@ -158,6 +177,89 @@ static NSString* stringFromClass(Class theClass)
     }
     
     return propertyNames;
+}
+
+- (void)addIndex:(NSString*)index
+{
+    [self addIndex:index order:0];
+}
+
+- (void)addIndex:(NSString*)index order:(NSInteger)order
+{
+    __block BOOL exists = NO;
+    
+    [self.indexes enumerateObjectsUsingBlock:^(PMObjectIndex *obj, NSUInteger idx, BOOL *stop) {
+        if ([obj.index isEqualToString:index])
+        {
+            exists = YES;
+            *stop = YES;
+        }
+    }];
+    
+    if (!exists)
+    {
+        PMObjectIndex *objectIndex = [[PMObjectIndex alloc] initWithIndex:index order:order];
+        self.insertedIndexes = [self.insertedIndexes arrayByAddingObject:objectIndex];
+        _hasChanges = YES;
+    }
+}
+
+- (void)removeIndex:(NSString*)index
+{
+    // Removing index from insertedIndexes
+    __block NSMutableArray *insertedIndexes = nil;
+    [self.insertedIndexes enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(PMObjectIndex *objectIndex, NSUInteger idx, BOOL *stop) {
+        if ([objectIndex.index isEqualToString:index])
+        {
+            if (!insertedIndexes)
+                insertedIndexes = [self.insertedIndexes mutableCopy];
+            
+            [insertedIndexes removeObjectAtIndex:idx];
+        }
+    }];
+    
+    if (insertedIndexes)
+        self.insertedIndexes = [insertedIndexes copy];
+    
+    // Removing index from indexes
+    __block NSMutableArray *deletedIndexes = nil;
+    __block NSMutableArray *indexes = nil;
+    [self.indexes enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(PMObjectIndex *objectIndex, NSUInteger idx, BOOL *stop) {
+        if ([objectIndex.index isEqualToString:index])
+        {
+            _hasChanges = YES;
+            
+            if (!indexes)
+                indexes = [self.indexes mutableCopy];
+            
+            if (!deletedIndexes)
+                deletedIndexes = [self.deletedIndexes mutableCopy];
+            
+            [deletedIndexes addObject:objectIndex];
+            [indexes removeObjectAtIndex:idx];
+        }
+    }];
+    
+    if (indexes)
+        self.indexes = [indexes copy];
+    
+    if (deletedIndexes)
+        self.deletedIndexes = [deletedIndexes copy];
+}
+
+- (NSArray*)allIndexes
+{
+    NSMutableArray *array = [NSMutableArray array];
+    
+    [self.insertedIndexes enumerateObjectsUsingBlock:^(PMObjectIndex *obj, NSUInteger idx, BOOL *stop) {
+        [array addObject:obj.index];
+    }];
+    
+    [self.indexes enumerateObjectsUsingBlock:^(PMObjectIndex *obj, NSUInteger idx, BOOL *stop) {
+        [array addObject:obj.index];
+    }];
+    
+    return [array copy];
 }
 
 @end

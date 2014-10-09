@@ -45,40 +45,55 @@ NSURL* applicationCacheDirectory();
     // Creating an object context connected to the above persistent store
     PMObjectContext *objectContext = [[PMObjectContext alloc] initWithPersistentStore:persistentStore];
     
-    NSArray *videos = [objectContext objectsOfClass:PMVideo.class];
-
-//    PMVideo *video = [TMVideo objectForQuery:@"me"];
-//    
-//    [TMVideo fectchQuery:@"me" completionBlock:^(NSArray *objects){
-//        
-//    }];
+    PMFetchRequest *fetchRequest = [PMFetchRequest fetchRequestWithClass:PMUser.class index:@"saul"];
+    NSArray *sauls = [objectContext executeFecthRequest:fetchRequest error:nil];
     
-    NSLog(@"VIDEOS: %@", videos.description);
-    
-    if (videos.count == 0)
+    if (sauls.count > 0)
     {
-        PMUser *user = [[PMUser alloc] initAndInsertToContext:objectContext];
-        user.username = @"Saul";
+        PMUser *saul = sauls.firstObject;
+        NSLog(@"SAUL: %@", saul.username);
         
-        PMVideo *video = [[PMVideo alloc] initAndInsertToContext:objectContext];
-        video.title = @"My Best Video";
-        video.uploaderID = user.objectID;
+//        [saul addIndex:@"saul"];
+        [saul removeIndex:@"baro"];
         
-        NSLog(@"1 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
-        NSLog(@"1 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
-    
-        [objectContext saveWithCompletionBlock:^(BOOL succeed) {
-            NSLog(@"2 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
-            NSLog(@"2 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
-        }];
+        [objectContext save];
     }
     else
     {
-        PMVideo *video = videos.firstObject;
-        PMUser *user = video.uploader;
+        PMFetchRequest *fetchRequest = [PMFetchRequest fetchRequestWithClass:PMVideo.class index:nil];
+        NSArray *videos = [objectContext executeFecthRequest:fetchRequest error:nil];
+        NSLog(@"VIDEOS: %@", videos.description);
         
-        NSLog(@"VIDEO: %@", video.title);
-        NSLog(@"USER: %@", user.username);
+        if (videos.count == 0)
+        {
+            PMUser *user = [[PMUser alloc] initAndInsertToContext:objectContext];
+            user.username = @"Saul";
+            [user addIndex:@"saul"];
+            
+            PMVideo *video = [[PMVideo alloc] initAndInsertToContext:objectContext];
+            video.title = @"My Best Video";
+            video.uploaderID = user.objectID;
+            
+            NSLog(@"1 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
+            NSLog(@"1 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
+            
+            [objectContext saveWithCompletionBlock:^(BOOL succeed) {
+                NSLog(@"2 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
+                NSLog(@"2 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
+            }];
+        }
+        else
+        {
+            PMVideo *video = videos.firstObject;
+            PMUser *user = video.uploader;
+            
+            [user addIndex:@"saul"];
+            
+            NSLog(@"VIDEO: %@", video.title);
+            NSLog(@"USER: %@", user.username);
+            
+            [objectContext save];
+        }
     }
 }
 

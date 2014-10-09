@@ -29,6 +29,7 @@
 #import "FMDatabasePool.h"
 #import "FMDatabaseQueue.h"
 #import "FMResultSet.h"
+#import "PMObjectIndex.h"
 
 #import "PMSQLiteObject_Private.h"
 
@@ -114,22 +115,75 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     return persistentObject;
 }
 
-- (NSArray*)persistentObjectsOfType:(NSString*)type
+//- (NSArray*)persistentObjectsOfType:(NSString*)type
+//{
+//    if (type == nil)
+//    {
+//        NSString *reason = @"Cannot query for persistent objects with a nil type.";
+//        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+//        [exception raise];
+//        return nil;
+//    }
+//    
+//    __block  NSMutableArray *array = nil;
+//    
+//    NSMutableArray *dbIDs = [NSMutableArray array];
+//    
+//    [_dbQueue inDatabase:^(FMDatabase *db) {
+//        FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.type = %@", type];
+//        
+//        array = [NSMutableArray array];
+//        
+//        while ([resultSet next])
+//        {
+//            PMSQLiteObject *persistentObject = [[PMSQLiteObject alloc] initWithID:[resultSet intForColumnIndex:0]
+//                                                                             type:[resultSet stringForColumnIndex:1]];
+//            
+//            persistentObject.lastUpdate = [NSDate dateWithTimeIntervalSince1970:[resultSet doubleForColumnIndex:2]];
+//            persistentObject.data = [resultSet dataForColumnIndex:3];
+//            persistentObject.persistentStore = self;
+//            
+//            [array addObject:persistentObject];
+//            [dbIDs addObject:@(persistentObject.dbID)];
+//        }
+//        
+//        [resultSet close];
+//    }];
+//
+//    for (NSNumber *dbID in dbIDs)
+//        [self pmd_didAccessObjectWithID:dbID.integerValue];
+//    
+//    return array;
+//}
+
+- (NSArray*)persistentObjectsOfType:(NSString *)type index:(NSString*)index offset:(NSInteger)offset limit:(NSInteger)limit
 {
-    if (type == nil)
+    NSMutableString *query = [NSMutableString stringWithString:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON objects.id = Data.id"];
+    
+    if (type != nil)
+        [query appendFormat:@" WHERE Objects.type = \"%@\"", type];
+    
+    if (index != nil)
     {
-        NSString *reason = @"Cannot query for persistent objects with a nil type.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return nil;
+        if (type != nil)
+            [query appendFormat:@" AND"];
+        else
+            [query appendFormat:@" WHERE"];
+        
+        [query appendFormat:@" Objects.id IN (SELECT Indexes.id FROM Indexes WHERE Indexes.idx = \"%@\" ORDER BY Indexes.sort)", index];
     }
+    
+//    if (limit > 0)
+//        [query appendFormat:@" LIMIT %ld", (long)limit];
+//    
+//    [query appendFormat:@" OFFSET %ld", (long)offset];
     
     __block  NSMutableArray *array = nil;
     
     NSMutableArray *dbIDs = [NSMutableArray array];
     
     [_dbQueue inDatabase:^(FMDatabase *db) {
-        FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON Objects.id = Data.id WHERE Objects.type = %@", type];
+        FMResultSet *resultSet = [db executeQuery:query];
         
         array = [NSMutableArray array];
         
@@ -148,7 +202,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         
         [resultSet close];
     }];
-
+    
     for (NSNumber *dbID in dbIDs)
         [self pmd_didAccessObjectWithID:dbID.integerValue];
     
@@ -237,30 +291,35 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     NSString *query0 = nil;
     NSString *query1 = nil;
     NSString *query2 = nil;
+    NSString *query3 = nil;
 
     if (type && ! date)
     {
-        query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE type = \"%@\"",type];
-        query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\")",type];
-        query2 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE type = \"%@\"", type];
+        query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE type = \"%@\"", type];
+        query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\")", type];
+        query2 = [NSString stringWithFormat:@"DELETE FROM Indexes WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\")", type];
+        query3 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE type = \"%@\"", type];
     }
     else if (!type && date)
     {
         query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE %@ < %f", optionDate, [date timeIntervalSince1970]];
-        query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE %@ < %f)",optionDate, [date timeIntervalSince1970]];
-        query2 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE %@ < %f",optionDate, [date timeIntervalSince1970]];
+        query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE %@ < %f)", optionDate, [date timeIntervalSince1970]];
+        query2 = [NSString stringWithFormat:@"DELETE FROM Indexes WHERE id IN (SELECT Objects.id FROM Objects WHERE %@ < %f)", optionDate, [date timeIntervalSince1970]];
+        query3 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE %@ < %f", optionDate, [date timeIntervalSince1970]];
     }
     else if (type && date)
     {
         query0 = [NSString stringWithFormat:@"SELECT Objects.id FROM Objects WHERE type = \"%@\" AND %@ < %f)", type, optionDate, [date timeIntervalSince1970]];
         query1 = [NSString stringWithFormat:@"DELETE FROM Data WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\" AND %@ < %f)", type, optionDate, [date timeIntervalSince1970]];
-        query2 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE type = \"%@\" AND %@ < %f",type, optionDate, [date timeIntervalSince1970]];
+        query2 = [NSString stringWithFormat:@"DELETE FROM Indexes WHERE id IN (SELECT Objects.id FROM Objects WHERE type = \"%@\" AND %@ < %f)", type, optionDate, [date timeIntervalSince1970]];
+        query3 = [NSString stringWithFormat:@"DELETE FROM Objects WHERE type = \"%@\" AND %@ < %f",type, optionDate, [date timeIntervalSince1970]];
     }
     else //if (!type && !date)
     {
         query0 = @"SELECT Objects.id FROM Objects";
         query1 = @"DELETE FROM Data";
-        query2 = @"DELETE FROM Objects";
+        query2 = @"DELETE FROM Indexes";
+        query3 = @"DELETE FROM Objects";
     }
     
     __block BOOL succeed = YES;
@@ -283,6 +342,9 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
                 @throw UpdateException;
             
             if (![db executeUpdate:query2])
+                @throw UpdateException;
+            
+            if (![db executeUpdate:query3])
                 @throw UpdateException;
             
             // Once here, no exceptions happened!
@@ -345,6 +407,115 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     return success;
 }
 
+- (BOOL)addIndex:(PMObjectIndex*)objectIndex toObjectWithID:(NSInteger)dbID
+{
+    __block BOOL succeed = YES;
+//    
+//    [_dbQueue inDatabase:^(FMDatabase *db) {
+//        [db executeQueryWithFormat:@""];
+//    }];
+    
+    [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        @try
+        {
+            if (![db executeUpdate:@"INSERT INTO Indexes (id, idx, sort) values (?, ?, ?)", @(dbID), objectIndex.index, @(objectIndex.order)])
+                @throw UpdateException;
+        }
+        @catch (NSException *exception)
+        {
+            succeed = NO;
+            
+            if ([exception.name isEqualToString:PMSQLiteStoreUpdateException])
+                *rollback = YES;
+            else
+                @throw exception;
+        }
+    }];
+    
+    return succeed;
+}
+
+//- (BOOL)updateIndex:(PMObjectIndex*)objectIndex toObjectWithID:(NSInteger)dbID
+//{
+//    __block BOOL succeed = YES;
+//    
+//    [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+//        @try
+//        {
+//            if (![db executeUpdateWithFormat:@"UPDATE Indexes SET order = %ld WHERE id = %ld AND index = %@", (long)objectIndex.order, (long)dbID, objectIndex.index])
+//                @throw UpdateException;
+//        }
+//        @catch (NSException *exception)
+//        {
+//            succeed = NO;
+//            
+//            if ([exception.name isEqualToString:PMSQLiteStoreUpdateException])
+//                *rollback = YES;
+//            else
+//                @throw exception;
+//        }
+//    }];
+//    
+//    return succeed;
+//}
+
+- (BOOL)deleteIndex:(NSString*)index toObjectWithID:(NSInteger)dbID
+{
+    NSString *query = nil;
+    
+    if (index && dbID != NSNotFound)
+        query = [NSString stringWithFormat:@"DELETE FROM Indexes WHERE idx = \"%@\" AND id = %ld", index, (long)dbID];
+    else if (index)
+        query = [NSString stringWithFormat:@"DELETE FROM Indexes WHERE idx = \"%@\"", index];
+    else if (dbID != NSNotFound)
+        query = [NSString stringWithFormat:@"DELETE FROM Indexes WHERE id = %ld", (long)dbID];
+    else
+        query = [NSString stringWithFormat:@"DELETE FROM Indexes"];
+    
+    __block BOOL succeed = YES;
+    
+    [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        @try
+        {
+            if (![db executeUpdate:query])
+                @throw UpdateException;
+        }
+        @catch (NSException *exception)
+        {
+            succeed = NO;
+            
+            if ([exception.name isEqualToString:PMSQLiteStoreUpdateException])
+                *rollback = YES;
+            else
+                @throw exception;
+        }
+    }];
+    
+    return succeed;
+}
+
+
+- (NSArray*)indexesForObjectWithID:(NSInteger)dbID
+{
+    NSMutableArray *array = [NSMutableArray array];
+    
+    [_dbQueue inDatabase:^(FMDatabase *db) {
+        FMResultSet *resultSet = [db executeQueryWithFormat:@"SELECT Indexes.idx, Indexes.sort FROM Indexes WHERE Indexes.id = %ld", (long)dbID];
+        
+        while ([resultSet next])
+        {
+            PMObjectIndex *objectIndex = [[PMObjectIndex alloc] initWithIndex:[resultSet stringForColumnIndex:0]
+                                                                        order:[resultSet intForColumnIndex:1]];
+            
+            [array addObject:objectIndex];
+        }
+        
+        [resultSet close];
+    }];
+    
+    return [array copy];
+}
+
 #pragma mark Public Methods
 
 - (void)cleanCache
@@ -369,8 +540,10 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         {
             [db executeUpdate:@"DROP TABLE Objects"];
             [db executeUpdate:@"DROP TABLE Data"];
-            [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, query TEXT, creationDate REAL, updateDate REAL, accessDate REAL)"];
+            [db executeUpdate:@"DROP TABLE Indexes"];
+            [db executeUpdate:@"CREATE TABLE Objects (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, creationDate REAL, updateDate REAL, accessDate REAL)"];
             [db executeUpdate:@"CREATE TABLE Data (id INTEGER PRIMARY KEY, data BLOB, FOREIGN KEY(id) REFERENCES Objects(id))"];
+            [db executeUpdate:@"CREATE TABLE Indexes (id INTEGER NOT NULL, sort INTEGER DEFAULT 0, idx TEXT NOT NULL, FOREIGN KEY(id) REFERENCES Objects(id), PRIMARY KEY (id, idx))"];
         }
         @catch (NSException *exception)
         {
@@ -461,6 +634,9 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     [_dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         @try
         {
+            if (![db executeUpdate:@"DELETE FROM Indexes WHERE id = ?", object.dbID])
+                @throw UpdateException;
+            
             if (![db executeUpdate:@"DELETE FROM Data WHERE id = ?", object.dbID])
                 @throw UpdateException;
 

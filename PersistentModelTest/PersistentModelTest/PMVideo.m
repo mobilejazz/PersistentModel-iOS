@@ -21,7 +21,7 @@
 - (PMUser*)uploader
 {
     if (_uploaderID)
-        return [self.context objectRegisteredForID:_uploaderID];
+        return [self.context objectWithID:_uploaderID];
     
     return nil;
 }

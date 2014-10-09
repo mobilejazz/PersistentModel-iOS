@@ -15,4 +15,9 @@
 
 + (NSArray*)pmd_allPersistentPropertyNames;
 
+@property (nonatomic, strong) NSArray *insertedIndexes;
+@property (nonatomic, strong) NSArray *indexes;
+@property (nonatomic, strong) NSArray *deletedIndexes;
+
+
 @end

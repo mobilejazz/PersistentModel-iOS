@@ -10,13 +10,29 @@
 
 @interface PMFetchRequest : NSObject
 
-+ (PMFetchRequest*)fetchRequestWithType:(NSString*)type;
-+ (PMFetchRequest*)fetchRequestWithType:(NSString*)type index:(NSString*)index;
++ (PMFetchRequest*)fetchRequestWithClass:(Class)objectClass;
++ (PMFetchRequest*)fetchRequestWithClass:(Class)objectClass index:(NSString*)index;
 
-@property (nonatomic, strong) NSString *type;
+/**
+ * The class type to fetch. Can be nil.
+ * @discussion If nil, the query
+ **/
+@property (nonatomic, strong) Class objectClass;
+
+/**
+ * The index to be queried. Can be nil.
+ **/
 @property (nonatomic, strong) NSString *index;
 
+/**
+ * Maximum amount of entries to be retrieved. Default value is 0.
+ * @discussion Use value 0 to fetch all entries.
+ **/
 @property (nonatomic, assign) NSInteger fetchLimit;
+
+/**
+ * Offset for the set of entries to be retrieved. Default value is 0.
+ **/
 @property (nonatomic, assign) NSInteger fetchOffset;
 
 @end

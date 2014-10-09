@@ -27,11 +27,11 @@
 #import "PMPersistentObject.h"
 #import "PMPersistentStore.h"
 #import "PMObjectID_Private.h"
-
 #import "PMBaseObject_Private.h"
-
+#import "PMFetchRequest.h"
 #import "PMKeyedArchiver.h"
 #import "PMKeyedUnarchiver.h"
+#import "PMObjectIndex.h"
 
 NSString * const PMObjectContextDidSaveNotification = @"PMObjectContextDidSaveNotification";
 NSString * const PMObjectContextSavedObjectsKey = @"PMObjectContextSavedObjectsKey";
@@ -93,19 +93,71 @@ static NSInteger kContextIDCount = 0;
 
 #pragma mark Public Methods
 
+- (NSArray*)executeFecthRequest:(PMFetchRequest*)request error:(NSError**)error
+{
+    NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(request.objectClass)
+                                                          index:request.index
+                                                         offset:request.fetchOffset
+                                                          limit:request.fetchLimit];
+    NSMutableArray *array = [NSMutableArray array];
+    
+    for (PMPersistentObject *mo in result)
+    {
+        PMBaseObject *baseObject = [_objects objectForKey:@(mo.dbID)];
+        
+        if (!baseObject)
+        {
+            baseObject = [self pmd_baseObjectFromModelObject:mo];
+            baseObject.hasChanges = NO;
+            [self insertObject:baseObject];
+        }
+        
+        [array addObject:baseObject];
+    }
+    
+    return array;
+}
+
+- (NSArray*)objectsOfClass:(Class)objectClass
+{
+    if (![objectClass isSubclassOfClass:PMBaseObject.class])
+        return @[];
+    
+    NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(objectClass) index:nil offset:0 limit:0];
+    
+    NSMutableArray *array = [NSMutableArray array];
+    
+    for (PMPersistentObject *mo in result)
+    {
+        PMBaseObject *baseObject = [_objects objectForKey:@(mo.dbID)];
+        
+        if (!baseObject)
+        {
+            baseObject = [self pmd_baseObjectFromModelObject:mo];
+            baseObject.hasChanges = NO;
+            [self insertObject:baseObject];
+        }
+        
+        [array addObject:baseObject];
+    }
+    
+    return array;
+}
+
 - (id)objectRegisteredForID:(PMObjectID*)objectID
 {
     PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
-    
-    if (!object)
-        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
-    
     return object;
 }
 
 - (id)objectWithID:(PMObjectID*)objectID
 {
     PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
+    
+    
+    if (!object)
+        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
+    
     return object;
 }
 
@@ -123,6 +175,9 @@ static NSInteger kContextIDCount = 0;
         [exception raise];
         return NO;
     }
+    
+    if (object.context == self)
+        return YES;
     
     if (object.context != nil)
     {
@@ -246,7 +301,43 @@ static NSInteger kContextIDCount = 0;
             succeed = [_persistentStore save];
         
         if (succeed)
+        {
             [_deletedObjects removeAllObjects];
+            
+            // -- UPDATE INDEXES -- //
+            for (PMBaseObject *object in allValues)
+            {
+                BOOL flag = NO;
+                
+                if (object.deletedIndexes.count > 0)
+                {
+                    
+                    for (PMObjectIndex *objectIndex in object.deletedIndexes)
+                    {
+                        BOOL success = [_persistentStore deleteIndex:objectIndex.index toObjectWithID:object.objectID.dbID];
+                        NSLog(@"DELETED INDEX <%@,%@> : %@", objectIndex.index, object.objectID.URIRepresentation.description, success?@"YES":@"NO");
+                    }
+                    
+                    object.deletedIndexes = @[];
+                    flag = YES;
+                }
+                
+                if (object.insertedIndexes.count > 0)
+                {
+                    for (PMObjectIndex *objectIndex in object.insertedIndexes)
+                    {
+                        BOOL success = [_persistentStore addIndex:objectIndex toObjectWithID:object.objectID.dbID];
+                        NSLog(@"INSERTED INDEX <%@,%@> : %@", objectIndex.index, object.objectID.URIRepresentation.description, success?@"YES":@"NO");
+                    }
+                    
+                    object.insertedIndexes = @[];
+                    flag = YES;
+                }
+                
+                if (flag)
+                    object.indexes = nil;
+            }
+        }
         
         _hasChanges = NO;
         
@@ -319,32 +410,6 @@ static NSInteger kContextIDCount = 0;
     }
 }
 
-- (NSArray*)objectsOfClass:(Class)objectClass
-{
-    if (![objectClass isSubclassOfClass:PMBaseObject.class])
-        return @[];
-    
-    NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(objectClass)];
-    
-    NSMutableArray *array = [NSMutableArray array];
-    
-    for (PMPersistentObject *mo in result)
-    {
-        PMBaseObject *baseObject = [_objects objectForKey:@(mo.dbID)];
-        
-        if (!baseObject)
-        {
-            baseObject = [self pmd_baseObjectFromModelObject:mo];
-            baseObject.hasChanges = NO;
-            [self insertObject:baseObject];
-        }
-        
-        [array addObject:baseObject];
-    }
-    
-    return array;
-}
-
 #pragma mark Private Methods
 
 - (void)pmd_updatePersistentModelObjectOfBaseObject:(PMBaseObject*)baseObject
@@ -412,6 +477,14 @@ static NSInteger kContextIDCount = 0;
     baseObject.lastUpdate = persistentObject.lastUpdate;
     
     return baseObject;
+}
+
+- (NSArray*)pmd_fetchIndexesForObjectWithID:(PMObjectID*)objectID
+{
+    if (objectID.isTemporaryID)
+        return nil;
+    
+    return [_persistentStore indexesForObjectWithID:objectID.dbID];
 }
 
 @end

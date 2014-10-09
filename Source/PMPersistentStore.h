@@ -25,6 +25,7 @@
 #import <Foundation/Foundation.h>
 
 @class PMPersistentObject;
+@class PMObjectIndex;
 
 /**
  * Multiples deleting options.
@@ -59,7 +60,6 @@ extern NSString * const PMPersistentStoreObjectKey;
  **/
 @interface PMPersistentStore : NSObject
 
-
 /** ---------------------------------------------------------------- **
  *  @name Creating instances and initializing
  ** ---------------------------------------------------------------- **/
@@ -71,15 +71,14 @@ extern NSString * const PMPersistentStoreObjectKey;
  **/
 - (id)initWithURL:(NSURL*)url;
 
-
-/** ---------------------------------------------------------------- **
- *  @name Main Methods
- ** ---------------------------------------------------------------- **/
-
 /**
  * The url of the persistent store.
  **/
 @property (nonatomic, strong, readonly) NSURL *url;
+
+/** ---------------------------------------------------------------- **
+ *  @name Fetching objects
+ ** ---------------------------------------------------------------- **/
 
 /**
  * This method should retrieve from the store the object with the given ID identifier. If the object is not found in the store, return nil.
@@ -93,7 +92,11 @@ extern NSString * const PMPersistentStoreObjectKey;
  * @param type The model object type. Cannot be nil.
  * @return An array with all stored objects of the given type.
  **/
-- (NSArray*)persistentObjectsOfType:(NSString*)type;
+- (NSArray*)persistentObjectsOfType:(NSString *)type index:(NSString*)index offset:(NSInteger)offset limit:(NSInteger)limit;
+
+/** ---------------------------------------------------------------- **
+ *  @name Object life-cycle
+ ** ---------------------------------------------------------------- **/
 
 /**
  * Creates a new persistent object and returns it for a model object key and type.
@@ -120,11 +123,24 @@ extern NSString * const PMPersistentStoreObjectKey;
  **/
 - (BOOL)deleteEntriesOfType:(NSString*)type olderThan:(NSDate*)date policy:(PMOptionDelete)option;
 
+/** ---------------------------------------------------------------- **
+ *  @name Saving changes
+ ** ---------------------------------------------------------------- **/
+
 /**
- * Call this method to persist changes.
+ * Call this method to persist changes of modifyied PMPersistentObjects.
  * @return YES if saved successfully, NO otherwise.
- * @discussion This method is executed in the current thread. A NO value as return indicates that the saving is not successful, not that the saving is not performed. That means that part of the persistent model could be saved, part not.
+ * @discussion This method is executed in the current thread. A NO value as return indicates that the saving is not successful, not that the saving is not performed. This means that part of the persistent model could be saved, part not.
  **/
 - (BOOL)save;
+
+/** ---------------------------------------------------------------- **
+ *  @name Indexing objects
+ ** ---------------------------------------------------------------- **/
+
+- (BOOL)addIndex:(PMObjectIndex*)objectIndex toObjectWithID:(NSInteger)dbID;
+- (BOOL)deleteIndex:(NSString*)index toObjectWithID:(NSInteger)dbID;
+
+- (NSArray*)indexesForObjectWithID:(NSInteger)dbID;
 
 @end

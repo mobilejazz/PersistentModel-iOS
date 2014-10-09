@@ -14,6 +14,7 @@
 		D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */; };
 		D201AA2318DC7C6600E5F26D /* PMVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2218DC7C6600E5F26D /* PMVideo.m */; };
 		D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2518DC7C6E00E5F26D /* PMUser.m */; };
+		D251290B19E6DE4F000904BD /* PMObjectIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = D251290A19E6DE4F000904BD /* PMObjectIndex.m */; };
 		D26C2B3518BFB1CF00E8BE90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */; };
 		D26C2B3718BFB1CF00E8BE90 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */; };
 		D26C2B3918BFB1CF00E8BE90 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3818BFB1CF00E8BE90 /* UIKit.framework */; };
@@ -50,6 +51,9 @@
 		D201AA2218DC7C6600E5F26D /* PMVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMVideo.m; sourceTree = "<group>"; };
 		D201AA2418DC7C6E00E5F26D /* PMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMUser.h; sourceTree = "<group>"; };
 		D201AA2518DC7C6E00E5F26D /* PMUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMUser.m; sourceTree = "<group>"; };
+		D251290919E6DE4F000904BD /* PMObjectIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectIndex.h; sourceTree = "<group>"; };
+		D251290A19E6DE4F000904BD /* PMObjectIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMObjectIndex.m; sourceTree = "<group>"; };
+		D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectContext_Private.h; sourceTree = "<group>"; };
 		D26C2B3118BFB1CF00E8BE90 /* PersistentModelTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersistentModelTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -99,6 +103,7 @@
 				D201AA0D18DC75E600E5F26D /* PMBaseObject.m */,
 				D201AA1018DC75E600E5F26D /* PMObjectContext.h */,
 				D201AA1118DC75E600E5F26D /* PMObjectContext.m */,
+				D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */,
 				D2C986BB19DAB8F300043329 /* PMObjectID.h */,
 				D2C986BE19DABBA200043329 /* PMObjectID_Private.h */,
 				D2C986BC19DAB8F300043329 /* PMObjectID.m */,
@@ -171,6 +176,8 @@
 		D29B88D219E2EB8700361F24 /* Persistent Store */ = {
 			isa = PBXGroup;
 			children = (
+				D251290919E6DE4F000904BD /* PMObjectIndex.h */,
+				D251290A19E6DE4F000904BD /* PMObjectIndex.m */,
 				D201AA1218DC75E600E5F26D /* PMPersistentObject.h */,
 				D2C986C019DAF56300043329 /* PMPersistentObject.m */,
 				D201AA1318DC75E600E5F26D /* PMPersistentStore.h */,
@@ -304,6 +311,7 @@
 				D29B88DC19E2F0AF00361F24 /* PMFetchRequest.m in Sources */,
 				D201AA2318DC7C6600E5F26D /* PMVideo.m in Sources */,
 				D201AA1D18DC75E600E5F26D /* PMObjectContext.m in Sources */,
+				D251290B19E6DE4F000904BD /* PMObjectIndex.m in Sources */,
 				D201AA1F18DC75E600E5F26D /* PMSQLiteObject.m in Sources */,
 				D26C2B4118BFB1CF00E8BE90 /* main.m in Sources */,
 				D26C2B4518BFB1CF00E8BE90 /* PMAppDelegate.m in Sources */,

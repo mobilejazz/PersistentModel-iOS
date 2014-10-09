@@ -24,9 +24,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "PMFetchRequest.h"
+
 @class PMBaseObject;
 @class PMPersistentStore;
 @class PMObjectID;
+@class PMFetchRequest;
 
 /**
  * After a successful save, this notification is posted.
@@ -45,7 +48,7 @@ extern NSString * const PMObjectContextSavedObjectsKey;
 extern NSString * const PMObjectContextDeletedObjectsKey;
 
 /**
- * TODO
+ * An instance of PMObjectContext represents a single “object space” or scratch pad in an application. Its primary responsibility is to manage a collection of objects. These objects form a group of related model objects that represent an internally consistent view of one or more persistent stores. A single managed object instance exists in one and only one context, but multiple copies of an object can exist in different contexts. Thus object uniquing is scoped to a particular context.
  **/
 @interface PMObjectContext : NSObject
 
@@ -60,21 +63,24 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  **/
 - (id)initWithPersistentStore:(PMPersistentStore*)persistentStore;
 
-
 /** ---------------------------------------------------------------- **
- *  @name Registering changes
+ *  @name Registering and Fetching Objects
  ** ---------------------------------------------------------------- **/
 
 /**
- * Boolean indicating if there are changes to save or not. YES if any new object has been inserted, deleted or modifyed, otherwise NO
- * @discussion This property works withing the 'hasChanges' property of 'PMBaseObject'. Remember that in 'PMBaseObject' changes are tracked via KVC methods. If you modify an object directly is your responsibility to set the flag 'hasChanges' to YES.
+ * Returns an array of objects that meet the criteria specified by a given fetch request.
+ * @param request A fetch request that specifies the search criteria for the fetch.
+ * @param error If there is a problem executing the fetch, upon return contains an instance of NSError that describes the problem.
+ * @return An array of objects that meet the criteria specified by request fetched from the receiver and from the persistent store. If an error occurs, returns nil. If no objects match the criteria specified by request, returns an empty array.
  **/
-@property (nonatomic, assign, readonly) BOOL hasChanges;
+- (NSArray*)executeFecthRequest:(PMFetchRequest*)request error:(out NSError *__autoreleasing *)error;
 
-
-/** ---------------------------------------------------------------- **
- *  @name Object manipulation
- ** ---------------------------------------------------------------- **/
+/**
+ * Queries to the persistent store and returns all objects stored of the given class.
+ * @param objectClass The class to retrieve all stored objects.
+ * @return An array with all instances of the specified class.
+ **/
+- (NSArray*)objectsOfClass:(Class)objectClass;
 
 /**
  * Returns the object for for the given ID, if registered in the context.
@@ -97,6 +103,10 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  **/
 - (NSArray*)registeredObjects;
 
+/** ---------------------------------------------------------------- **
+ *  @name Object Management
+ ** ---------------------------------------------------------------- **/
+
 /**
  * Use this method to insert unregistered 'PMBaseObject's into the current context.
  * @param object The object to insert. This argument cannot be nil, otherwise a 'NSInvalidArgumentException' exception will be rised.
@@ -112,15 +122,15 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  **/
 - (void)deleteObject:(PMBaseObject*)object;
 
-
 /** ---------------------------------------------------------------- **
- *  @name Dealing with persistence
+ *  @name Saving
  ** ---------------------------------------------------------------- **/
 
 /**
- * The current used persistent store.
+ * Boolean indicating if there are changes to save or not. YES if any new object has been inserted, deleted or modifyed, otherwise NO
+ * @discussion This property works withing the 'hasChanges' property of 'PMBaseObject'. Remember that in 'PMBaseObject' changes are tracked via KVC methods. If you modify an object directly is your responsibility to set the flag 'hasChanges' to YES.
  **/
-@property (nonatomic, strong, readonly) PMPersistentStore *persistentStore;
+@property (nonatomic, assign, readonly) BOOL hasChanges;
 
 /**
  * Saves the current context into the persistent store. This method is equivalent to '-saveWithCompletionBlock:' with a NULL block as argument.
@@ -134,16 +144,23 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  **/
 - (void)saveWithCompletionBlock:(void (^)(BOOL succeed))completionBlock;
 
-/**
- * When having multiple contexts operating on the same persistent store, call this method from the 'PMObjectContextDidSaveNotification' posted by other contexts to update the current state of the current context.
- **/
-- (void)mergeChangesFromContextDidSaveNotification:(NSNotification*)notification;
+/** ---------------------------------------------------------------- **
+ *  @name Managing Concurrency
+ ** ---------------------------------------------------------------- **/
 
 /**
- * Queries to the persistent store and returns all objects stored of the given class.
- * @param objectClass The class to retrieve all stored objects.
- * @return An array with all instances of the specified class.
+ * Merges the changes specified in a given notification.
+ * @param An instance of an `PMObjectContextDidSaveNotification` notification posted by another context.
  **/
-- (NSArray*)objectsOfClass:(Class)objectClass;
+- (void)mergeChangesFromContextDidSaveNotification:(NSNotification*)notification __deprecated;
+
+/** ---------------------------------------------------------------- **
+ *  @name Managing the Persistent Store
+ ** ---------------------------------------------------------------- **/
+
+/**
+ * The current used persistent store.
+ **/
+@property (nonatomic, strong, readonly) PMPersistentStore *persistentStore;
 
 @end
