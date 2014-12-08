@@ -14,6 +14,7 @@
 		D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */; };
 		D201AA2318DC7C6600E5F26D /* PMVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2218DC7C6600E5F26D /* PMVideo.m */; };
 		D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2518DC7C6E00E5F26D /* PMUser.m */; };
+		D226129F1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D226129E1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m */; };
 		D251290B19E6DE4F000904BD /* PMObjectIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = D251290A19E6DE4F000904BD /* PMObjectIndex.m */; };
 		D26C2B3518BFB1CF00E8BE90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */; };
 		D26C2B3718BFB1CF00E8BE90 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */; };
@@ -51,6 +52,8 @@
 		D201AA2218DC7C6600E5F26D /* PMVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMVideo.m; sourceTree = "<group>"; };
 		D201AA2418DC7C6E00E5F26D /* PMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMUser.h; sourceTree = "<group>"; };
 		D201AA2518DC7C6E00E5F26D /* PMUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMUser.m; sourceTree = "<group>"; };
+		D226129D1A35B8AF00EFBF83 /* NSArray+PMBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+PMBaseObject.h"; sourceTree = "<group>"; };
+		D226129E1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+PMBaseObject.m"; sourceTree = "<group>"; };
 		D251290919E6DE4F000904BD /* PMObjectIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectIndex.h; sourceTree = "<group>"; };
 		D251290A19E6DE4F000904BD /* PMObjectIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMObjectIndex.m; sourceTree = "<group>"; };
 		D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectContext_Private.h; sourceTree = "<group>"; };
@@ -101,6 +104,8 @@
 				D201AA0C18DC75E600E5F26D /* PMBaseObject.h */,
 				D2C986BF19DACBA600043329 /* PMBaseObject_Private.h */,
 				D201AA0D18DC75E600E5F26D /* PMBaseObject.m */,
+				D226129D1A35B8AF00EFBF83 /* NSArray+PMBaseObject.h */,
+				D226129E1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m */,
 				D201AA1018DC75E600E5F26D /* PMObjectContext.h */,
 				D201AA1118DC75E600E5F26D /* PMObjectContext.m */,
 				D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */,
@@ -318,6 +323,7 @@
 				D29B88D919E2EC5A00361F24 /* PMKeyedUnarchiver.m in Sources */,
 				D201AA1B18DC75E600E5F26D /* PMBaseObject.m in Sources */,
 				D29B88D619E2EBCA00361F24 /* PMKeyedArchiver.m in Sources */,
+				D226129F1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m in Sources */,
 				D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */,
 				D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */,
 				D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */,
