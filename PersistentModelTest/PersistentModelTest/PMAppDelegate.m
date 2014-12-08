@@ -33,66 +33,60 @@ NSURL* applicationCacheDirectory();
 
 - (void)performTest
 {
+    // Creating the URL where we will store the database
     NSURL *url = [applicationCacheDirectory() URLByAppendingPathComponent:@"PersistentStorage.sql"];
     
-    NSLog(@"%@", url);
-    
-//    [[NSFileManager defaultManager] removeItemAtURL:url error:nil]; // <------ COMMENT AND UNCOMMENT THIS LINE TO DELETE THE PERSISTENT STORAGE
-    
-    // Creating the persistent store
+    // Instantiating the persistent store
     PMPersistentStore *persistentStore = [[PMSQLiteStore alloc] initWithURL:url];
     
-    // Creating an object context connected to the above persistent store
+    // Creating an object context connected to the persistent store
     PMObjectContext *objectContext = [[PMObjectContext alloc] initWithPersistentStore:persistentStore];
     
+    // Preparing a fetch for "saul"
     PMFetchRequest *fetchRequest = [PMFetchRequest fetchRequestWithClass:PMUser.class index:@"saul"];
+
+    // Fetching all the objects laveled as "saul"
     NSArray *sauls = [objectContext executeFecthRequest:fetchRequest error:nil];
     
     if (sauls.count > 0)
     {
+        // If found at least one "saul"
         PMUser *saul = sauls.firstObject;
-        NSLog(@"SAUL: %@", saul.username);
         
-//        [saul addIndex:@"saul"];
-        [saul removeIndex:@"baro"];
-        
-        [objectContext save];
+        NSLog(@"Did found object: %@", saul.username);
     }
     else
     {
+        // If no "saul" was found
+        
+        // Fetching all the videos in the store
         PMFetchRequest *fetchRequest = [PMFetchRequest fetchRequestWithClass:PMVideo.class index:nil];
         NSArray *videos = [objectContext executeFecthRequest:fetchRequest error:nil];
-        NSLog(@"VIDEOS: %@", videos.description);
         
         if (videos.count == 0)
         {
+            // If no videos were found
+            
+            // Creating a user with index "saul"
             PMUser *user = [[PMUser alloc] initAndInsertToContext:objectContext];
             user.username = @"Saul";
             [user addIndex:@"saul"];
             
+            // Creating a video
             PMVideo *video = [[PMVideo alloc] initAndInsertToContext:objectContext];
             video.title = @"My Best Video";
             video.uploaderID = user.objectID;
             
+            // Showing the temporal objectIDs of the objects
             NSLog(@"1 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
             NSLog(@"1 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
             
+            // Saving to the store
             [objectContext saveWithCompletionBlock:^(BOOL succeed) {
+                // Showing the final objectIDs of the objects
                 NSLog(@"2 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
                 NSLog(@"2 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
             }];
-        }
-        else
-        {
-            PMVideo *video = videos.firstObject;
-            PMUser *user = video.uploader;
-            
-            [user addIndex:@"saul"];
-            
-            NSLog(@"VIDEO: %@", video.title);
-            NSLog(@"USER: %@", user.username);
-            
-            [objectContext save];
         }
     }
 }

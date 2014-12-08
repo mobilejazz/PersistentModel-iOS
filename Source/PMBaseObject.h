@@ -84,9 +84,31 @@ extern NSString * const PMBaseObjectNilKeyException;
  *  @name Indexing the object
  ** ---------------------------------------------------------------- **/
 
+/**
+ * Add an index to the current object.
+ * @param index The index given to the object.
+ * @discussion Indexes are not unique an multiple objects can share the same index.
+ **/
 - (void)addIndex:(NSString*)index;
+
+/**
+ * Add an index to the current object.
+ * @param index The index given to the object.
+ * @param order A value equal or greater than zero that is used to sort all the objects with a same index whenever beeing retreived.
+ * @discussion If two objects have the same order, the order of those cannot be guaranteed. However the order from those objects regarding the list of all objects with the same index will be the expected one.
+ **/
 - (void)addIndex:(NSString*)index order:(NSInteger)order;
+
+/**
+ * Remove an index from the current object.
+ * @param index The index to remove.
+ **/
 - (void)removeIndex:(NSString*)index;
+
+/**
+ * Return a list of NSString with all the indexes that the current object has.
+ * @return The list of all indexes of the current object.
+ **/
 - (NSArray*)allIndexes;
 
 @end

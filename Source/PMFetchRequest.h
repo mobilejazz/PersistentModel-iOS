@@ -8,9 +8,24 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ * This class is used to setup a fetch query to the object context.
+ **/
 @interface PMFetchRequest : NSObject
 
+/**
+ * Fetch request to retrieve all objects of a specific class.
+ * @param objectClass The class
+ * @return A new fetch request ready to be used.
+ **/
 + (PMFetchRequest*)fetchRequestWithClass:(Class)objectClass;
+
+/**
+ * Fetch request to retrieve all objects of a specific class for a given index.
+ * @param objectClass The class
+ * @param index The index of the objects
+ * @return A new fetch request ready to be used.
+ **/
 + (PMFetchRequest*)fetchRequestWithClass:(Class)objectClass index:(NSString*)index;
 
 /**
