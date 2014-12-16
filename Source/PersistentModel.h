@@ -20,7 +20,6 @@
 
 #import "PMObjectID.h"
 #import "PMBaseObject.h"
-#import "NSArray+PMBaseObject.h"
 #import "PMObjectContext.h"
 
 #import "PMPersistentStore.h"

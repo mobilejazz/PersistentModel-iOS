@@ -33,11 +33,11 @@ extern NSString * const PMBaseObjectNilKeyException;
  * Superclass of persistent objects. Persistent objects will have to be a subclass of this one.
  *
  * In order to persist properties, you can choose between:
- *   1. Manually encode and decode your properties using the NSCoding protocol methods
+ *   1. Manually encode and decode your properties using the NSCoding protocol methods.
  *   2. Override the method `keysForPersistentValues` and return a set of strings with the names of those properties you want to persist. Values will be retrieved using KVC.
+ *   3. Do a mixture of options 1 and 2.
  **/
 @interface PMBaseObject : NSObject <NSCoding>
-
 
 /** ---------------------------------------------------------------- **
  *  @name Creating instances and initializing
@@ -114,14 +114,94 @@ extern NSString * const PMBaseObjectNilKeyException;
 @end
 
 
-#define mjz_key(arg) NSStringFromSelector(@selector(arg))
+#define pmd_key(arg) NSStringFromSelector(@selector(arg))
 
 @interface PMBaseObject (Subclassing)
 
 /**
- * Set of property names that are automatically persistent via KVC access.
- * @discussion Subclasses may override this method to mark those properties to be persistent. Values will be accessed via KVC. By default this class returns an empty set.
+ * Convinience method to define the names of the properties that must be persisted.
+ * @discussion Subclasses may override this method to mark those properties to be persistent. Property values will be accessed via KVC. By default this class returns an empty set.
  **/
 + (NSArray*)pmd_persistentPropertyNames;
 
 @end
+
+#pragma mark - Extensions
+
+extern NSString * const PMInvalidObjectException;
+
+/**
+ * Extending `NSArray` to be used with `PMBaseObject`s.
+ **/
+@interface NSArray (PMBaseObject)
+
+/** ---------------------------------------------------------------- **
+ *  @name Adding index to objects
+ ** ---------------------------------------------------------------- **/
+
+/**
+ * Add an index to the current objects conained in the array (keeping the order).
+ * @param index The index to add.
+ * @discussion All objects must be of class `PMBaseObject`, otherwise this method will thorw an exception.
+ **/
+- (void)pmd_makeObjectsAddIndex:(NSString*)index;
+
+/**
+ * Remove an index from all objects on the array.
+ * @param index The index to add.
+ * @discussion All objects must be of class `PMBaseObject`, otherwise this method will thorw an exception.
+ **/
+- (void)pmd_makeObjectsRemoveIndex:(NSString*)index;
+
+@end
+
+/**
+ * Extending `NSSet` to be used with `PMBaseObject`s.
+ **/
+@interface NSSet (PMBaseObject)
+
+/** ---------------------------------------------------------------- **
+ *  @name Adding index to objects
+ ** ---------------------------------------------------------------- **/
+
+/**
+ * Add an index to the current objects conained in the set.
+ * @param index The index to add.
+ * @discussion All objects must be of class `PMBaseObject`, otherwise this method will thorw an exception.
+ **/
+- (void)pmd_makeObjectsAddIndex:(NSString*)index;
+
+/**
+ * Remove an index from all objects on the set.
+ * @param index The index to add.
+ * @discussion All objects must be of class `PMBaseObject`, otherwise this method will thorw an exception.
+ **/
+- (void)pmd_makeObjectsRemoveIndex:(NSString*)index;
+
+@end
+
+/**
+ * Extending `NSOrderedSet` to be used with `PMBaseObject`s.
+ **/
+@interface NSOrderedSet (PMBaseObject)
+
+/** ---------------------------------------------------------------- **
+ *  @name Adding index to objects
+ ** ---------------------------------------------------------------- **/
+
+/**
+ * Add an index to the current objects conained in the set (keeping the order).
+ * @param index The index to add.
+ * @discussion All objects must be of class `PMBaseObject`, otherwise this method will thorw an exception.
+ **/
+- (void)pmd_makeObjectsAddIndex:(NSString*)index;
+
+/**
+ * Remove an index from all objects on the set.
+ * @param index The index to add.
+ * @discussion All objects must be of class `PMBaseObject`, otherwise this method will thorw an exception.
+ **/
+- (void)pmd_makeObjectsRemoveIndex:(NSString*)index;
+
+@end
+

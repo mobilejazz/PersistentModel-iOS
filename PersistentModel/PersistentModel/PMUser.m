@@ -1,6 +1,6 @@
 //
 //  PMUser.m
-//  PersistentModelTest
+//  PersistentModel
 //
 //  Created by Joan Martin on 21/03/14.
 //  Copyright (c) 2014 Joan Martin. All rights reserved.
@@ -12,9 +12,9 @@
 
 + (NSArray*)pmd_persistentPropertyNames
 {
-    return @[mjz_key(username),
-             mjz_key(age),
-             mjz_key(avatarURL),
+    return @[pmd_key(username),
+             pmd_key(age),
+             pmd_key(avatarURL),
              ];
 }
 

@@ -1,0 +1,10 @@
+# Uncomment this line to define a global platform for your project
+# platform :ios, "6.0"
+
+target 'PersistentModel' do
+  pod 'FMDB', '~> 2.2'
+end
+
+target 'PersistentModel Tests' do
+  pod 'FMDB', '~> 2.2'
+end

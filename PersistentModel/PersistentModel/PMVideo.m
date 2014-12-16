@@ -1,6 +1,6 @@
 //
 //  PMVideo.m
-//  PersistentModelTest
+//  PersistentModel
 //
 //  Created by Joan Martin on 21/03/14.
 //  Copyright (c) 2014 Joan Martin. All rights reserved.
@@ -13,8 +13,8 @@
 
 + (NSArray*)pmd_persistentPropertyNames
 {
-    return @[mjz_key(title),
-             mjz_key(uploaderID),
+    return @[pmd_key(title),
+             pmd_key(uploaderID),
              ];
 }
 

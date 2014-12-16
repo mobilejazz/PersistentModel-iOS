@@ -275,3 +275,134 @@ static NSString* stringFromClass(Class theClass)
 
 @end
 
+#pragma mark - Extensions
+
+NSString * const PMInvalidObjectException = @"PMInvalidObjectException";
+
+@implementation NSArray (PMBaseObject)
+
+- (void)pmd_makeObjectsAddIndex:(NSString*)index
+{
+    [self enumerateObjectsUsingBlock:^(PMBaseObject *obj, NSUInteger idx, BOOL *stop) {
+        
+        if ([obj isKindOfClass:PMBaseObject.class])
+        {
+            [obj addIndex:index order:idx];
+        }
+        else
+        {
+            NSException *exception = [NSException exceptionWithName:PMInvalidObjectException
+                                                             reason:[NSString stringWithFormat:@"You cannot add an index to an object of class %@", obj.class]
+                                                           userInfo:nil];
+            
+            [exception raise];
+        }
+    }];
+}
+
+- (void)pmd_makeObjectsRemoveIndex:(NSString*)index
+{
+    [self enumerateObjectsUsingBlock:^(PMBaseObject *obj, NSUInteger idx, BOOL *stop) {
+        
+        if ([obj isKindOfClass:PMBaseObject.class])
+        {
+            [obj removeIndex:index];
+        }
+        else
+        {
+            NSException *exception = [NSException exceptionWithName:PMInvalidObjectException
+                                                             reason:[NSString stringWithFormat:@"You cannot remove an index to an object of class %@", obj.class]
+                                                           userInfo:nil];
+            
+            [exception raise];
+        }
+    }];
+}
+
+@end
+
+@implementation NSSet (PMBaseObject)
+
+- (void)pmd_makeObjectsAddIndex:(NSString*)index
+{
+    [self enumerateObjectsUsingBlock:^(PMBaseObject *obj, BOOL *stop) {
+        
+        if ([obj isKindOfClass:PMBaseObject.class])
+        {
+            [obj addIndex:index];
+        }
+        else
+        {
+            NSException *exception = [NSException exceptionWithName:PMInvalidObjectException
+                                                             reason:[NSString stringWithFormat:@"You cannot add an index to an object of class %@", obj.class]
+                                                           userInfo:nil];
+            
+            [exception raise];
+        }
+    }];
+}
+
+- (void)pmd_makeObjectsRemoveIndex:(NSString*)index
+{
+    [self enumerateObjectsUsingBlock:^(PMBaseObject *obj, BOOL *stop) {
+        
+        if ([obj isKindOfClass:PMBaseObject.class])
+        {
+            [obj removeIndex:index];
+        }
+        else
+        {
+            NSException *exception = [NSException exceptionWithName:PMInvalidObjectException
+                                                             reason:[NSString stringWithFormat:@"You cannot remove an index to an object of class %@", obj.class]
+                                                           userInfo:nil];
+            
+            [exception raise];
+        }
+    }];
+}
+
+@end
+
+@implementation NSOrderedSet (PMBaseObject)
+
+- (void)pmd_makeObjectsAddIndex:(NSString*)index
+{
+    [self enumerateObjectsUsingBlock:^(PMBaseObject *obj, NSUInteger idx, BOOL *stop) {
+        
+        if ([obj isKindOfClass:PMBaseObject.class])
+        {
+            [obj addIndex:index order:idx];
+        }
+        else
+        {
+            NSException *exception = [NSException exceptionWithName:PMInvalidObjectException
+                                                             reason:[NSString stringWithFormat:@"You cannot add an index to an object of class %@", obj.class]
+                                                           userInfo:nil];
+            
+            [exception raise];
+        }
+    }];
+}
+
+- (void)pmd_makeObjectsRemoveIndex:(NSString*)index
+{
+    [self enumerateObjectsUsingBlock:^(PMBaseObject *obj, NSUInteger idx, BOOL *stop) {
+        
+        if ([obj isKindOfClass:PMBaseObject.class])
+        {
+            [obj removeIndex:index];
+        }
+        else
+        {
+            NSException *exception = [NSException exceptionWithName:PMInvalidObjectException
+                                                             reason:[NSString stringWithFormat:@"You cannot remove an index to an object of class %@", obj.class]
+                                                           userInfo:nil];
+            
+            [exception raise];
+        }
+    }];
+}
+
+@end
+
+

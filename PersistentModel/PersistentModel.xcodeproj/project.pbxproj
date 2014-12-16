@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8F5D9E2EF62AA17C7B9E4AD1 /* libPods-PersistentModel Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC8E80E8E64CB772D491AEF /* libPods-PersistentModel Tests.a */; };
+		90C28346687EEA3AF9300FED /* libPods-PersistentModel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95B28F9C3D8D9DA424FEABCE /* libPods-PersistentModel.a */; };
 		D201AA1B18DC75E600E5F26D /* PMBaseObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA0D18DC75E600E5F26D /* PMBaseObject.m */; };
 		D201AA1D18DC75E600E5F26D /* PMObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1118DC75E600E5F26D /* PMObjectContext.m */; };
 		D201AA1E18DC75E600E5F26D /* PMPersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1418DC75E600E5F26D /* PMPersistentStore.m */; };
@@ -14,8 +16,21 @@
 		D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */; };
 		D201AA2318DC7C6600E5F26D /* PMVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2218DC7C6600E5F26D /* PMVideo.m */; };
 		D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2518DC7C6E00E5F26D /* PMUser.m */; };
-		D226129F1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D226129E1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m */; };
 		D251290B19E6DE4F000904BD /* PMObjectIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = D251290A19E6DE4F000904BD /* PMObjectIndex.m */; };
+		D257646E1A4075EA00C59CD1 /* PersistentModel_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D257646D1A4075EA00C59CD1 /* PersistentModel_Tests.m */; };
+		D25764741A40776D00C59CD1 /* PMBaseObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA0D18DC75E600E5F26D /* PMBaseObject.m */; };
+		D25764751A40776D00C59CD1 /* PMObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1118DC75E600E5F26D /* PMObjectContext.m */; };
+		D25764761A40776D00C59CD1 /* PMObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986BC19DAB8F300043329 /* PMObjectID.m */; };
+		D25764771A40776D00C59CD1 /* PMFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88DB19E2F0AF00361F24 /* PMFetchRequest.m */; };
+		D25764781A40776D00C59CD1 /* PMKeyedArchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88D519E2EBCA00361F24 /* PMKeyedArchiver.m */; };
+		D25764791A40776D00C59CD1 /* PMKeyedUnarchiver.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88D819E2EC5A00361F24 /* PMKeyedUnarchiver.m */; };
+		D257647A1A40776D00C59CD1 /* PMObjectIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = D251290A19E6DE4F000904BD /* PMObjectIndex.m */; };
+		D257647B1A40776D00C59CD1 /* PMPersistentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986C019DAF56300043329 /* PMPersistentObject.m */; };
+		D257647C1A40776D00C59CD1 /* PMPersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1418DC75E600E5F26D /* PMPersistentStore.m */; };
+		D257647D1A40776D00C59CD1 /* PMSQLiteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1618DC75E600E5F26D /* PMSQLiteObject.m */; };
+		D257647E1A40776D00C59CD1 /* PMSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */; };
+		D25764831A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */; };
+		D25764841A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */; };
 		D26C2B3518BFB1CF00E8BE90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */; };
 		D26C2B3718BFB1CF00E8BE90 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */; };
 		D26C2B3918BFB1CF00E8BE90 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3818BFB1CF00E8BE90 /* UIKit.framework */; };
@@ -28,12 +43,24 @@
 		D29B88DC19E2F0AF00361F24 /* PMFetchRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = D29B88DB19E2F0AF00361F24 /* PMFetchRequest.m */; };
 		D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986BC19DAB8F300043329 /* PMObjectID.m */; };
 		D2C986C119DAF56300043329 /* PMPersistentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986C019DAF56300043329 /* PMPersistentObject.m */; };
-		D754E87AA4B84C06BBF43DCD /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9281106B868B42E48ADF6C46 /* libPods.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D257646F1A4075EA00C59CD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D26C2B2918BFB1CF00E8BE90 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D26C2B3018BFB1CF00E8BE90;
+			remoteInfo = PersistentModel;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		269C608F53274FD0AC433315 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		0A919120130127B0DECF0C6E /* Pods-PersistentModel Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersistentModel Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PersistentModel Tests/Pods-PersistentModel Tests.release.xcconfig"; sourceTree = "<group>"; };
+		6D26BF271C6D22AC83FE7ED4 /* Pods-PersistentModel Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PersistentModel Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PersistentModel Tests/Pods-PersistentModel Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		8DC8E80E8E64CB772D491AEF /* libPods-PersistentModel Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PersistentModel Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9281106B868B42E48ADF6C46 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		95B28F9C3D8D9DA424FEABCE /* libPods-PersistentModel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PersistentModel.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D201AA0B18DC75E600E5F26D /* PersistentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentModel.h; sourceTree = "<group>"; };
 		D201AA0C18DC75E600E5F26D /* PMBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMBaseObject.h; sourceTree = "<group>"; };
 		D201AA0D18DC75E600E5F26D /* PMBaseObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMBaseObject.m; sourceTree = "<group>"; };
@@ -52,19 +79,23 @@
 		D201AA2218DC7C6600E5F26D /* PMVideo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMVideo.m; sourceTree = "<group>"; };
 		D201AA2418DC7C6E00E5F26D /* PMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMUser.h; sourceTree = "<group>"; };
 		D201AA2518DC7C6E00E5F26D /* PMUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMUser.m; sourceTree = "<group>"; };
-		D226129D1A35B8AF00EFBF83 /* NSArray+PMBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+PMBaseObject.h"; sourceTree = "<group>"; };
-		D226129E1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+PMBaseObject.m"; sourceTree = "<group>"; };
 		D251290919E6DE4F000904BD /* PMObjectIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectIndex.h; sourceTree = "<group>"; };
 		D251290A19E6DE4F000904BD /* PMObjectIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMObjectIndex.m; sourceTree = "<group>"; };
 		D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectContext_Private.h; sourceTree = "<group>"; };
-		D26C2B3118BFB1CF00E8BE90 /* PersistentModelTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersistentModelTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D25764691A4075EA00C59CD1 /* PersistentModel Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PersistentModel Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D257646C1A4075EA00C59CD1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D257646D1A4075EA00C59CD1 /* PersistentModel_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PersistentModel_Tests.m; sourceTree = "<group>"; };
+		D257647F1A4077A700C59CD1 /* libPods.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPods.a; path = "Pods/build/Debug-iphoneos/libPods.a"; sourceTree = "<group>"; };
+		D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Pods-PersistentModel.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel.debug.xcconfig"; sourceTree = "<group>"; };
+		D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Pods-PersistentModel.release.xcconfig"; path = "Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel.release.xcconfig"; sourceTree = "<group>"; };
+		D26C2B3118BFB1CF00E8BE90 /* PersistentModel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersistentModel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		D26C2B3818BFB1CF00E8BE90 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		D26C2B3C18BFB1CF00E8BE90 /* PersistentModelTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PersistentModelTest-Info.plist"; sourceTree = "<group>"; };
+		D26C2B3C18BFB1CF00E8BE90 /* PersistentModel-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "PersistentModel-Info.plist"; sourceTree = "<group>"; };
 		D26C2B3E18BFB1CF00E8BE90 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D26C2B4018BFB1CF00E8BE90 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		D26C2B4218BFB1CF00E8BE90 /* PersistentModelTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PersistentModelTest-Prefix.pch"; sourceTree = "<group>"; };
+		D26C2B4218BFB1CF00E8BE90 /* PersistentModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PersistentModel-Prefix.pch"; sourceTree = "<group>"; };
 		D26C2B4318BFB1CF00E8BE90 /* PMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PMAppDelegate.h; sourceTree = "<group>"; };
 		D26C2B4418BFB1CF00E8BE90 /* PMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PMAppDelegate.m; sourceTree = "<group>"; };
 		D26C2B4618BFB1CF00E8BE90 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -83,6 +114,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		D25764661A4075EA00C59CD1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F5D9E2EF62AA17C7B9E4AD1 /* libPods-PersistentModel Tests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D26C2B2E18BFB1CF00E8BE90 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -90,7 +129,7 @@
 				D26C2B3718BFB1CF00E8BE90 /* CoreGraphics.framework in Frameworks */,
 				D26C2B3918BFB1CF00E8BE90 /* UIKit.framework in Frameworks */,
 				D26C2B3518BFB1CF00E8BE90 /* Foundation.framework in Frameworks */,
-				D754E87AA4B84C06BBF43DCD /* libPods.a in Frameworks */,
+				90C28346687EEA3AF9300FED /* libPods-PersistentModel.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,8 +143,6 @@
 				D201AA0C18DC75E600E5F26D /* PMBaseObject.h */,
 				D2C986BF19DACBA600043329 /* PMBaseObject_Private.h */,
 				D201AA0D18DC75E600E5F26D /* PMBaseObject.m */,
-				D226129D1A35B8AF00EFBF83 /* NSArray+PMBaseObject.h */,
-				D226129E1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m */,
 				D201AA1018DC75E600E5F26D /* PMObjectContext.h */,
 				D201AA1118DC75E600E5F26D /* PMObjectContext.m */,
 				D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */,
@@ -121,20 +158,39 @@
 			path = ../../Source;
 			sourceTree = "<group>";
 		};
+		D257646A1A4075EA00C59CD1 /* PersistentModel Tests */ = {
+			isa = PBXGroup;
+			children = (
+				D257646D1A4075EA00C59CD1 /* PersistentModel_Tests.m */,
+				D257646B1A4075EA00C59CD1 /* Supporting Files */,
+			);
+			path = "PersistentModel Tests";
+			sourceTree = "<group>";
+		};
+		D257646B1A4075EA00C59CD1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D257646C1A4075EA00C59CD1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		D26C2B2818BFB1CF00E8BE90 = {
 			isa = PBXGroup;
 			children = (
-				D26C2B3A18BFB1CF00E8BE90 /* PersistentModelTest */,
+				D26C2B3A18BFB1CF00E8BE90 /* PersistentModel */,
+				D257646A1A4075EA00C59CD1 /* PersistentModel Tests */,
 				D26C2B3318BFB1CF00E8BE90 /* Frameworks */,
 				D26C2B3218BFB1CF00E8BE90 /* Products */,
-				269C608F53274FD0AC433315 /* Pods.xcconfig */,
+				E1B6E180E8EDFB2628E63A69 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
 		D26C2B3218BFB1CF00E8BE90 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D26C2B3118BFB1CF00E8BE90 /* PersistentModelTest.app */,
+				D26C2B3118BFB1CF00E8BE90 /* PersistentModel.app */,
+				D25764691A4075EA00C59CD1 /* PersistentModel Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -142,16 +198,19 @@
 		D26C2B3318BFB1CF00E8BE90 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D257647F1A4077A700C59CD1 /* libPods.a */,
 				D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */,
 				D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */,
 				D26C2B3818BFB1CF00E8BE90 /* UIKit.framework */,
 				D26C2B4D18BFB1CF00E8BE90 /* XCTest.framework */,
 				9281106B868B42E48ADF6C46 /* libPods.a */,
+				95B28F9C3D8D9DA424FEABCE /* libPods-PersistentModel.a */,
+				8DC8E80E8E64CB772D491AEF /* libPods-PersistentModel Tests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D26C2B3A18BFB1CF00E8BE90 /* PersistentModelTest */ = {
+		D26C2B3A18BFB1CF00E8BE90 /* PersistentModel */ = {
 			isa = PBXGroup;
 			children = (
 				D26C2B4318BFB1CF00E8BE90 /* PMAppDelegate.h */,
@@ -164,16 +223,16 @@
 				D26C2B4618BFB1CF00E8BE90 /* Images.xcassets */,
 				D26C2B3B18BFB1CF00E8BE90 /* Supporting Files */,
 			);
-			path = PersistentModelTest;
+			path = PersistentModel;
 			sourceTree = "<group>";
 		};
 		D26C2B3B18BFB1CF00E8BE90 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				D26C2B3C18BFB1CF00E8BE90 /* PersistentModelTest-Info.plist */,
+				D26C2B3C18BFB1CF00E8BE90 /* PersistentModel-Info.plist */,
 				D26C2B3D18BFB1CF00E8BE90 /* InfoPlist.strings */,
 				D26C2B4018BFB1CF00E8BE90 /* main.m */,
-				D26C2B4218BFB1CF00E8BE90 /* PersistentModelTest-Prefix.pch */,
+				D26C2B4218BFB1CF00E8BE90 /* PersistentModel-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -208,12 +267,43 @@
 			name = Coding;
 			sourceTree = "<group>";
 		};
+		E1B6E180E8EDFB2628E63A69 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */,
+				D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */,
+				6D26BF271C6D22AC83FE7ED4 /* Pods-PersistentModel Tests.debug.xcconfig */,
+				0A919120130127B0DECF0C6E /* Pods-PersistentModel Tests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D26C2B3018BFB1CF00E8BE90 /* PersistentModelTest */ = {
+		D25764681A4075EA00C59CD1 /* PersistentModel Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D26C2B5D18BFB1D000E8BE90 /* Build configuration list for PBXNativeTarget "PersistentModelTest" */;
+			buildConfigurationList = D25764711A4075EA00C59CD1 /* Build configuration list for PBXNativeTarget "PersistentModel Tests" */;
+			buildPhases = (
+				6208DAB72B97974BDF55A215 /* Check Pods Manifest.lock */,
+				D25764651A4075EA00C59CD1 /* Sources */,
+				D25764661A4075EA00C59CD1 /* Frameworks */,
+				D25764671A4075EA00C59CD1 /* Resources */,
+				4132F9E152A5B218C3C6BCCA /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D25764701A4075EA00C59CD1 /* PBXTargetDependency */,
+			);
+			name = "PersistentModel Tests";
+			productName = "PersistentModel Tests";
+			productReference = D25764691A4075EA00C59CD1 /* PersistentModel Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D26C2B3018BFB1CF00E8BE90 /* PersistentModel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D26C2B5D18BFB1D000E8BE90 /* Build configuration list for PBXNativeTarget "PersistentModel" */;
 			buildPhases = (
 				B973AFB7A97C41AFB830DFA7 /* Check Pods Manifest.lock */,
 				D26C2B2D18BFB1CF00E8BE90 /* Sources */,
@@ -225,9 +315,9 @@
 			);
 			dependencies = (
 			);
-			name = PersistentModelTest;
-			productName = PersistentModelTest;
-			productReference = D26C2B3118BFB1CF00E8BE90 /* PersistentModelTest.app */;
+			name = PersistentModel;
+			productName = PersistentModel;
+			productReference = D26C2B3118BFB1CF00E8BE90 /* PersistentModel.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -240,12 +330,16 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Joan Martin";
 				TargetAttributes = {
+					D25764681A4075EA00C59CD1 = {
+						CreatedOnToolsVersion = 6.1.1;
+						TestTargetID = D26C2B3018BFB1CF00E8BE90;
+					};
 					D26C2B3018BFB1CF00E8BE90 = {
 						DevelopmentTeam = 3VP5WS89TZ;
 					};
 				};
 			};
-			buildConfigurationList = D26C2B2C18BFB1CF00E8BE90 /* Build configuration list for PBXProject "PersistentModelTest" */;
+			buildConfigurationList = D26C2B2C18BFB1CF00E8BE90 /* Build configuration list for PBXProject "PersistentModel" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -257,16 +351,26 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D26C2B3018BFB1CF00E8BE90 /* PersistentModelTest */,
+				D26C2B3018BFB1CF00E8BE90 /* PersistentModel */,
+				D25764681A4075EA00C59CD1 /* PersistentModel Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		D25764671A4075EA00C59CD1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D26C2B2F18BFB1CF00E8BE90 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D25764841A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig in Resources */,
+				D25764831A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig in Resources */,
 				D26C2B3F18BFB1CF00E8BE90 /* InfoPlist.strings in Resources */,
 				D26C2B4718BFB1CF00E8BE90 /* Images.xcassets in Resources */,
 			);
@@ -275,6 +379,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4132F9E152A5B218C3C6BCCA /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PersistentModel Tests/Pods-PersistentModel Tests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6208DAB72B97974BDF55A215 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		9234CD052F4A472FBA2D9980 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -287,7 +421,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B973AFB7A97C41AFB830DFA7 /* Check Pods Manifest.lock */ = {
@@ -308,6 +442,25 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		D25764651A4075EA00C59CD1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D25764771A40776D00C59CD1 /* PMFetchRequest.m in Sources */,
+				D25764781A40776D00C59CD1 /* PMKeyedArchiver.m in Sources */,
+				D25764761A40776D00C59CD1 /* PMObjectID.m in Sources */,
+				D257647B1A40776D00C59CD1 /* PMPersistentObject.m in Sources */,
+				D25764791A40776D00C59CD1 /* PMKeyedUnarchiver.m in Sources */,
+				D25764741A40776D00C59CD1 /* PMBaseObject.m in Sources */,
+				D257647E1A40776D00C59CD1 /* PMSQLiteStore.m in Sources */,
+				D25764751A40776D00C59CD1 /* PMObjectContext.m in Sources */,
+				D257647D1A40776D00C59CD1 /* PMSQLiteObject.m in Sources */,
+				D257647A1A40776D00C59CD1 /* PMObjectIndex.m in Sources */,
+				D257646E1A4075EA00C59CD1 /* PersistentModel_Tests.m in Sources */,
+				D257647C1A40776D00C59CD1 /* PMPersistentStore.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D26C2B2D18BFB1CF00E8BE90 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -323,7 +476,6 @@
 				D29B88D919E2EC5A00361F24 /* PMKeyedUnarchiver.m in Sources */,
 				D201AA1B18DC75E600E5F26D /* PMBaseObject.m in Sources */,
 				D29B88D619E2EBCA00361F24 /* PMKeyedArchiver.m in Sources */,
-				D226129F1A35B8AF00EFBF83 /* NSArray+PMBaseObject.m in Sources */,
 				D201AA2018DC75E600E5F26D /* PMSQLiteStore.m in Sources */,
 				D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */,
 				D2C986BD19DAB8F300043329 /* PMObjectID.m in Sources */,
@@ -332,6 +484,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D25764701A4075EA00C59CD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D26C2B3018BFB1CF00E8BE90 /* PersistentModel */;
+			targetProxy = D257646F1A4075EA00C59CD1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D26C2B3D18BFB1CF00E8BE90 /* InfoPlist.strings */ = {
@@ -345,6 +505,60 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		D25764721A4075EA00C59CD1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6D26BF271C6D22AC83FE7ED4 /* Pods-PersistentModel Tests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "PersistentModel Tests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PersistentModel.app/PersistentModel";
+			};
+			name = Debug;
+		};
+		D25764731A4075EA00C59CD1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A919120130127B0DECF0C6E /* Pods-PersistentModel Tests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "PersistentModel Tests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Pods/build/Debug-iphoneos",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PersistentModel.app/PersistentModel";
+			};
+			name = Release;
+		};
 		D26C2B5B18BFB1D000E8BE90 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -417,30 +631,30 @@
 		};
 		D26C2B5E18BFB1D000E8BE90 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 269C608F53274FD0AC433315 /* Pods.xcconfig */;
+			baseConfigurationReference = D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PersistentModelTest/PersistentModelTest-Prefix.pch";
-				INFOPLIST_FILE = "PersistentModelTest/PersistentModelTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "PersistentModel/PersistentModel-Prefix.pch";
+				INFOPLIST_FILE = "PersistentModel/PersistentModel-Info.plist";
+				PRODUCT_NAME = PersistentModel;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		D26C2B5F18BFB1D000E8BE90 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 269C608F53274FD0AC433315 /* Pods.xcconfig */;
+			baseConfigurationReference = D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "PersistentModelTest/PersistentModelTest-Prefix.pch";
-				INFOPLIST_FILE = "PersistentModelTest/PersistentModelTest-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				GCC_PREFIX_HEADER = "PersistentModel/PersistentModel-Prefix.pch";
+				INFOPLIST_FILE = "PersistentModel/PersistentModel-Info.plist";
+				PRODUCT_NAME = PersistentModel;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -448,7 +662,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D26C2B2C18BFB1CF00E8BE90 /* Build configuration list for PBXProject "PersistentModelTest" */ = {
+		D25764711A4075EA00C59CD1 /* Build configuration list for PBXNativeTarget "PersistentModel Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D25764721A4075EA00C59CD1 /* Debug */,
+				D25764731A4075EA00C59CD1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D26C2B2C18BFB1CF00E8BE90 /* Build configuration list for PBXProject "PersistentModel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D26C2B5B18BFB1D000E8BE90 /* Debug */,
@@ -457,7 +680,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D26C2B5D18BFB1D000E8BE90 /* Build configuration list for PBXNativeTarget "PersistentModelTest" */ = {
+		D26C2B5D18BFB1D000E8BE90 /* Build configuration list for PBXNativeTarget "PersistentModel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D26C2B5E18BFB1D000E8BE90 /* Debug */,

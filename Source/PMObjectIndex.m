@@ -1,6 +1,6 @@
 //
 //  PMObjectIndex.m
-//  PersistentModelTest
+//  PersistentModel
 //
 //  Created by Joan Martin on 09/10/14.
 //  Copyright (c) 2014 Joan Martin. All rights reserved.
