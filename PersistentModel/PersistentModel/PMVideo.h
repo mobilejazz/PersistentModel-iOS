@@ -17,6 +17,9 @@
 
 @property (nonatomic, strong) PMObjectID *uploaderID;
 
+@property (nonatomic, strong) PMUser *user;
+
+
 - (PMUser*)uploader;
 
 @end

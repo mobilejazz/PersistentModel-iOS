@@ -11,6 +11,8 @@
 
 @implementation PMVideo
 
+@dynamic user;
+
 + (NSArray*)pmd_persistentPropertyNames
 {
     return @[pmd_key(title),

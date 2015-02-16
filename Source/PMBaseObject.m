@@ -29,6 +29,7 @@
 #import "PMObjectContext_Private.h"
 
 #import "PMObjectIndex.h"
+#import <objc/runtime.h>
 
 
 NSString * const PMBaseObjectNilKeyException = @"PMBaseObjectNilKeyException";
@@ -52,7 +53,53 @@ static NSString* stringFromClass(Class theClass)
     return string;
 }
 
+static NSMutableDictionary *_dynamicSelectors;
+
 @implementation PMBaseObject
+
++ (void)initialize
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _dynamicSelectors = [NSMutableDictionary dictionary];
+    });
+    
+    
+    unsigned int outCount;
+    objc_property_t *properties = class_copyPropertyList(self, &outCount);
+    for (unsigned int i = 0; i < outCount; i++)
+    {
+        objc_property_t property = properties[i];
+        
+        NSString *propertyName = [NSString stringWithUTF8String:property_getName(property)];
+        NSArray *attributes = [[NSString stringWithUTF8String:property_getAttributes(property)] componentsSeparatedByString:@","];
+        
+        BOOL isClass = [attributes[0] rangeOfString:@"@"].location != NSNotFound;
+        if (isClass)
+        {
+            NSString *className = [attributes[0] substringWithRange:NSMakeRange(3, [attributes[0] length]-4)];
+            BOOL dynamicProperty = [attributes[2] isEqualToString:@"D"];
+            
+            if (dynamicProperty)
+            {
+                if ([NSClassFromString(className) isSubclassOfClass:PMBaseObject.class])
+                {
+                    NSLog(@"<%@> : [%@]", propertyName, className);
+                    
+                    NSString *propertyNameWithUppercaseLetter = [NSString stringWithFormat:@"%@%@",
+                                                                 [[propertyName substringToIndex:1] uppercaseString],
+                                                                 [propertyName substringFromIndex:1]];
+
+                    NSString *setter = [NSString stringWithFormat:@"set%@:", propertyNameWithUppercaseLetter];
+                    NSString *getter = propertyName;
+                    
+                    _dynamicSelectors[setter] = @[propertyName, className, setter, NSStringFromSelector(@selector(pmd_setPrimitiveObject:forKey:))];
+                    _dynamicSelectors[getter] = @[propertyName, className, getter, NSStringFromSelector(@selector(pmd_getPrimitiveObjectForKey:ofClass:))];
+                }
+            }
+        }
+    }
+}
 
 - (id)init
 {
@@ -143,6 +190,64 @@ static NSString* stringFromClass(Class theClass)
         _indexes = [self.context pmd_fetchIndexesForObjectWithID:self.objectID];
     
     return _indexes;
+}
+
+#pragma mark Dynamic Methods
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
+    NSString *selectorName = NSStringFromSelector(anInvocation.selector);
+    
+    if (_dynamicSelectors[selectorName])
+    {
+        NSArray *attributes = _dynamicSelectors[selectorName];
+        anInvocation.selector = NSSelectorFromString(attributes[3]);
+        
+        if ([attributes[2] hasPrefix:@"set"])
+        {
+            NSString *propertyName = attributes[0];
+            [anInvocation setArgument:&propertyName atIndex:3];
+        }
+        else
+        {
+            NSString *key = attributes[0];
+            Class clazz = NSClassFromString(attributes[1]);
+            [anInvocation setArgument:&key atIndex:2];
+            [anInvocation setArgument:&clazz atIndex:3];
+        }
+        
+        [anInvocation invoke];
+    }
+    else
+        [super forwardInvocation:anInvocation];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+    NSMethodSignature *methodSignature = [super methodSignatureForSelector:aSelector];
+    
+    if (methodSignature)
+        return methodSignature;
+    
+    NSString *selectorName = NSStringFromSelector(aSelector);
+    
+    if (_dynamicSelectors[selectorName])
+    {
+        NSArray *attributes = _dynamicSelectors[selectorName];
+        methodSignature = [self methodSignatureForSelector:NSSelectorFromString(attributes[3])];
+    }
+    
+    return methodSignature;
+}
+
+- (id)pmd_getPrimitiveObjectForKey:(NSString*)key ofClass:(Class)clazz
+{
+    return nil;
+}
+
+- (void)pmd_setPrimitiveObject:(id)object forKey:(NSString*)key
+{
+    
 }
 
 #pragma mark Private Methods

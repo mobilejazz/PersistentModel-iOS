@@ -22,13 +22,37 @@ NSURL* applicationCacheDirectory();
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
-    [self performTest];
+    [self test2];
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     self.window.rootViewController = [UIViewController new];
     
     return YES;
+}
+
+- (void)test2
+{
+    // Creating the URL where we will store the database
+    NSURL *url = [applicationCacheDirectory() URLByAppendingPathComponent:@"foo.sql"];
+    
+    // Instantiating the persistent store
+    PMPersistentStore *persistentStore = [[PMSQLiteStore alloc] initWithURL:url];
+    
+    // Creating an object context connected to the persistent store
+    PMObjectContext *objectContext = [[PMObjectContext alloc] initWithPersistentStore:persistentStore];
+    
+    // Creating a user with index "saul"
+    PMUser *user = [[PMUser alloc] initAndInsertToContext:objectContext];
+    user.username = @"Saul";
+    [user addIndex:@"saul"];
+    
+    // Creating a video
+    PMVideo *video = [[PMVideo alloc] initAndInsertToContext:objectContext];
+    video.title = @"My Best Video";
+    video.user = user;
+//    
+    NSLog(@"USER: %@", video.user);
 }
 
 - (void)performTest
