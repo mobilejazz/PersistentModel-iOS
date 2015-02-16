@@ -103,6 +103,12 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  **/
 - (NSArray*)registeredObjects;
 
+/**
+ * This method returns all instances that have been delted from that context.
+ * @return An array with all deleted instances from the current context.
+ **/
+- (NSArray*)deletedObjects;
+
 /** ---------------------------------------------------------------- **
  *  @name Object Management
  ** ---------------------------------------------------------------- **/

@@ -17,7 +17,7 @@
 		D201AA2318DC7C6600E5F26D /* PMVideo.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2218DC7C6600E5F26D /* PMVideo.m */; };
 		D201AA2618DC7C6E00E5F26D /* PMUser.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA2518DC7C6E00E5F26D /* PMUser.m */; };
 		D251290B19E6DE4F000904BD /* PMObjectIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = D251290A19E6DE4F000904BD /* PMObjectIndex.m */; };
-		D257646E1A4075EA00C59CD1 /* PersistentModel_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D257646D1A4075EA00C59CD1 /* PersistentModel_Tests.m */; };
+		D257646E1A4075EA00C59CD1 /* PMObjectContext_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D257646D1A4075EA00C59CD1 /* PMObjectContext_Tests.m */; };
 		D25764741A40776D00C59CD1 /* PMBaseObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA0D18DC75E600E5F26D /* PMBaseObject.m */; };
 		D25764751A40776D00C59CD1 /* PMObjectContext.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1118DC75E600E5F26D /* PMObjectContext.m */; };
 		D25764761A40776D00C59CD1 /* PMObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = D2C986BC19DAB8F300043329 /* PMObjectID.m */; };
@@ -31,6 +31,8 @@
 		D257647E1A40776D00C59CD1 /* PMSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */; };
 		D25764831A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */; };
 		D25764841A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */; };
+		D25764871A407CF400C59CD1 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D25764861A407CF400C59CD1 /* TestUtilities.m */; };
+		D25764891A407D2900C59CD1 /* PMPersistentStore_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D25764881A407D2900C59CD1 /* PMPersistentStore_Tests.m */; };
 		D26C2B3518BFB1CF00E8BE90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */; };
 		D26C2B3718BFB1CF00E8BE90 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */; };
 		D26C2B3918BFB1CF00E8BE90 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3818BFB1CF00E8BE90 /* UIKit.framework */; };
@@ -84,10 +86,13 @@
 		D251290C19E6F1A2000904BD /* PMObjectContext_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMObjectContext_Private.h; sourceTree = "<group>"; };
 		D25764691A4075EA00C59CD1 /* PersistentModel Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PersistentModel Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D257646C1A4075EA00C59CD1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D257646D1A4075EA00C59CD1 /* PersistentModel_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PersistentModel_Tests.m; sourceTree = "<group>"; };
+		D257646D1A4075EA00C59CD1 /* PMObjectContext_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PMObjectContext_Tests.m; sourceTree = "<group>"; };
 		D257647F1A4077A700C59CD1 /* libPods.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPods.a; path = "Pods/build/Debug-iphoneos/libPods.a"; sourceTree = "<group>"; };
 		D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Pods-PersistentModel.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel.debug.xcconfig"; sourceTree = "<group>"; };
 		D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Pods-PersistentModel.release.xcconfig"; path = "Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel.release.xcconfig"; sourceTree = "<group>"; };
+		D25764851A407CF400C59CD1 /* TestUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
+		D25764861A407CF400C59CD1 /* TestUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestUtilities.m; sourceTree = "<group>"; };
+		D25764881A407D2900C59CD1 /* PMPersistentStore_Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMPersistentStore_Tests.m; sourceTree = "<group>"; };
 		D26C2B3118BFB1CF00E8BE90 /* PersistentModel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersistentModel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D26C2B3618BFB1CF00E8BE90 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -161,7 +166,10 @@
 		D257646A1A4075EA00C59CD1 /* PersistentModel Tests */ = {
 			isa = PBXGroup;
 			children = (
-				D257646D1A4075EA00C59CD1 /* PersistentModel_Tests.m */,
+				D25764851A407CF400C59CD1 /* TestUtilities.h */,
+				D25764861A407CF400C59CD1 /* TestUtilities.m */,
+				D257646D1A4075EA00C59CD1 /* PMObjectContext_Tests.m */,
+				D25764881A407D2900C59CD1 /* PMPersistentStore_Tests.m */,
 				D257646B1A4075EA00C59CD1 /* Supporting Files */,
 			);
 			path = "PersistentModel Tests";
@@ -447,6 +455,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D25764771A40776D00C59CD1 /* PMFetchRequest.m in Sources */,
+				D25764891A407D2900C59CD1 /* PMPersistentStore_Tests.m in Sources */,
 				D25764781A40776D00C59CD1 /* PMKeyedArchiver.m in Sources */,
 				D25764761A40776D00C59CD1 /* PMObjectID.m in Sources */,
 				D257647B1A40776D00C59CD1 /* PMPersistentObject.m in Sources */,
@@ -455,8 +464,9 @@
 				D257647E1A40776D00C59CD1 /* PMSQLiteStore.m in Sources */,
 				D25764751A40776D00C59CD1 /* PMObjectContext.m in Sources */,
 				D257647D1A40776D00C59CD1 /* PMSQLiteObject.m in Sources */,
+				D25764871A407CF400C59CD1 /* TestUtilities.m in Sources */,
 				D257647A1A40776D00C59CD1 /* PMObjectIndex.m in Sources */,
-				D257646E1A4075EA00C59CD1 /* PersistentModel_Tests.m in Sources */,
+				D257646E1A4075EA00C59CD1 /* PMObjectContext_Tests.m in Sources */,
 				D257647C1A40776D00C59CD1 /* PMPersistentStore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

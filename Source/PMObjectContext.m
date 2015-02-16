@@ -166,6 +166,11 @@ static NSInteger kContextIDCount = 0;
     return _objects.allValues;
 }
 
+- (NSArray*)deletedObjects
+{
+    return [_deletedObjects allObjects];
+}
+
 - (BOOL)insertObject:(PMBaseObject*)object
 {
     if (object == nil)
