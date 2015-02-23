@@ -127,8 +127,14 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
 
 - (NSURL*)URIRepresentation
 {
-    NSString *scheme = _temporaryID ? kPMObjectIDTemporalScheme : kPMObjectIDScheme;
-    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%ld", scheme, _type, (long)_dbID]];
+    NSURL *url = [PMObjectID URIRepresentationForType:_type dbID:_dbID temporaryID:_temporaryID];
+    return url;
+}
+
++ (NSURL*)URIRepresentationForType:(NSString*)type dbID:(NSInteger)dbID temporaryID:(BOOL)temporaryID;
+{
+    NSString *scheme = temporaryID ? kPMObjectIDTemporalScheme : kPMObjectIDScheme;
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%ld", scheme, type, (long)dbID]];
     
     return url;
 }

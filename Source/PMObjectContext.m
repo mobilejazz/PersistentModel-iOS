@@ -103,7 +103,7 @@ static NSInteger kContextIDCount = 0;
     
     for (PMPersistentObject *mo in result)
     {
-        PMBaseObject *baseObject = [_objects objectForKey:@(mo.dbID)];
+        PMBaseObject *baseObject = [_objects objectForKey:[PMObjectID URIRepresentationForType:mo.type dbID:mo.dbID temporaryID:NO]];
         
         if (!baseObject)
         {
@@ -129,7 +129,7 @@ static NSInteger kContextIDCount = 0;
     
     for (PMPersistentObject *mo in result)
     {
-        PMBaseObject *baseObject = [_objects objectForKey:@(mo.dbID)];
+        PMBaseObject *baseObject = [_objects objectForKey:[PMObjectID URIRepresentationForType:mo.type dbID:mo.dbID temporaryID:NO]];
         
         if (!baseObject)
         {

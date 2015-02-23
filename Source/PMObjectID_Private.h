@@ -41,4 +41,9 @@
  **/
 @property (nonatomic, readwrite, strong) PMPersistentStore *persistentStore;
 
+/**
+ * Generates the URI representation for the given parameters.
+ **/
++ (NSURL*)URIRepresentationForType:(NSString*)type dbID:(NSInteger)dbID temporaryID:(BOOL)temporaryID;
+
 @end
