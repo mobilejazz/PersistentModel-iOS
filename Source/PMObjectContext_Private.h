@@ -11,5 +11,6 @@
 @interface PMObjectContext ()
 
 - (NSArray*)pmd_fetchIndexesForObjectWithID:(PMObjectID*)objectID;
+- (id)pmd_objectWithID:(PMObjectID*)objectID forceFetch:(BOOL)forceFecth;
 
 @end

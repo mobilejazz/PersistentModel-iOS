@@ -22,7 +22,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 
-#import "PMObjectContext.h"
+#import "PMObjectContext_Private.h"
 
 #import "PMPersistentObject.h"
 #import "PMPersistentStore.h"
@@ -152,13 +152,7 @@ static NSInteger kContextIDCount = 0;
 
 - (id)objectWithID:(PMObjectID*)objectID
 {
-    PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
-    
-    
-    if (!object)
-        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
-    
-    return object;
+    return [self pmd_objectWithID:objectID forceFetch:NO];
 }
 
 - (NSArray*)registeredObjects
@@ -355,6 +349,7 @@ static NSInteger kContextIDCount = 0;
         
         if (currentOperationIndex == _savingOperationIndex)
         {
+            // Sending did save notification
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
             
             if (savedObjects.count > 0)
@@ -367,6 +362,17 @@ static NSInteger kContextIDCount = 0;
                                                                        userInfo:dict];
             
             [[NSNotificationCenter defaultCenter] postNotification:notification];
+            
+            // Updating changes to the parent context
+            if (_parentContext)
+            {
+                for (PMBaseObject *object in savedObjects)
+                {
+                    // Retrieving the object from the parent context.
+                    PMBaseObject *myObject = [object baseObjectInContext:_parentContext];
+                    (void)myObject;
+                }
+            }
         }
     };
     
@@ -416,6 +422,32 @@ static NSInteger kContextIDCount = 0;
 }
 
 #pragma mark Private Methods
+
+- (id)pmd_objectWithID:(PMObjectID*)objectID forceFetch:(BOOL)forceFecth;
+{
+    PMBaseObject *object = [_objects objectForKey:objectID.URIRepresentation];
+    
+    if (!object)
+    {
+        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
+    }
+    else
+    {
+        if (forceFecth)
+        {
+            PMPersistentObject *po = [_persistentStore persistentObjectWithID:objectID.dbID];
+            PMBaseObject *objectFresh = [self pmd_baseObjectFromModelObject:po];
+            
+            NSDictionary *keyedValues = [objectFresh dictionaryWithValuesForKeys:[object.class pmd_allPersistentPropertyNames]];
+            
+            [object setValuesForKeysWithDictionary:keyedValues];
+            object.hasChanges = NO;
+            object.lastUpdate = object.lastUpdate;
+        }
+    }
+    
+    return object;
+}
 
 - (void)pmd_updatePersistentModelObjectOfBaseObject:(PMBaseObject*)baseObject
 {

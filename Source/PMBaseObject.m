@@ -179,6 +179,12 @@ static NSString* stringFromClass(Class theClass)
     return propertyNames;
 }
 
+- (id)baseObjectInContext:(PMObjectContext*)context
+{
+    PMBaseObject *baseObject = [context pmd_objectWithID:self.objectID forceFetch:YES];
+    return baseObject;
+}
+
 - (void)addIndex:(NSString*)index
 {
     [self addIndex:index order:0];

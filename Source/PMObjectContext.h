@@ -150,6 +150,12 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
  **/
 - (void)saveWithCompletionBlock:(void (^)(BOOL succeed))completionBlock;
 
+/**
+ * A parent context. Default value is nil.
+ * @discussion If not nil, after the current saves all changes are reflected to the parent context.
+ **/
+@property (nonatomic, weak) PMObjectContext *parentContext;
+
 /** ---------------------------------------------------------------- **
  *  @name Managing Concurrency
  ** ---------------------------------------------------------------- **/
@@ -157,8 +163,9 @@ extern NSString * const PMObjectContextDeletedObjectsKey;
 /**
  * Merges the changes specified in a given notification.
  * @param An instance of an `PMObjectContextDidSaveNotification` notification posted by another context.
+ * @discussion If you want your context to react to this notification, you must manually register your context to observe the notification.
  **/
-- (void)mergeChangesFromContextDidSaveNotification:(NSNotification*)notification __deprecated;
+- (void)mergeChangesFromContextDidSaveNotification:(NSNotification*)notification;
 
 /** ---------------------------------------------------------------- **
  *  @name Managing the Persistent Store
