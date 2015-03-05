@@ -81,18 +81,6 @@ extern NSString * const PMBaseObjectNilKeyException;
 @property (nonatomic, assign) BOOL hasChanges;
 
 /** ---------------------------------------------------------------- **
- *  @name Switching contexts
- ** ---------------------------------------------------------------- **/
-
-/**
- * Returns the equivalent base object in the given context.
- * @param context The other context.
- * @return Another instance of base object representing the  same object in another context.
- * @discussion The given context and the curren context must be connected to the same persistent store, otherwise this method always return nil.
- **/
-- (id)baseObjectInContext:(PMObjectContext*)context;
-
-/** ---------------------------------------------------------------- **
  *  @name Indexing the object
  ** ---------------------------------------------------------------- **/
 

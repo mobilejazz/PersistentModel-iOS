@@ -179,12 +179,6 @@ static NSString* stringFromClass(Class theClass)
     return propertyNames;
 }
 
-- (id)baseObjectInContext:(PMObjectContext*)context
-{
-    PMBaseObject *baseObject = [context pmd_objectWithID:self.objectID forceFetch:YES];
-    return baseObject;
-}
-
 - (void)addIndex:(NSString*)index
 {
     [self addIndex:index order:0];
@@ -206,12 +200,15 @@ static NSString* stringFromClass(Class theClass)
     {
         PMObjectIndex *objectIndex = [[PMObjectIndex alloc] initWithIndex:index order:order];
         self.insertedIndexes = [self.insertedIndexes arrayByAddingObject:objectIndex];
+        [self.context pmd_didRegisterIndex:objectIndex object:self];
         _hasChanges = YES;
     }
 }
 
 - (void)removeIndex:(NSString*)index
 {
+    __block PMObjectIndex *objIndex = nil;
+    
     // Removing index from insertedIndexes
     __block NSMutableArray *insertedIndexes = nil;
     [self.insertedIndexes enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(PMObjectIndex *objectIndex, NSUInteger idx, BOOL *stop) {
@@ -220,6 +217,7 @@ static NSString* stringFromClass(Class theClass)
             if (!insertedIndexes)
                 insertedIndexes = [self.insertedIndexes mutableCopy];
             
+            objIndex = objectIndex;
             [insertedIndexes removeObjectAtIndex:idx];
         }
     }];
@@ -241,6 +239,7 @@ static NSString* stringFromClass(Class theClass)
             if (!deletedIndexes)
                 deletedIndexes = [self.deletedIndexes mutableCopy];
             
+            objIndex = objectIndex;
             [deletedIndexes addObject:objectIndex];
             [indexes removeObjectAtIndex:idx];
         }
@@ -251,6 +250,9 @@ static NSString* stringFromClass(Class theClass)
     
     if (deletedIndexes)
         self.deletedIndexes = [deletedIndexes copy];
+    
+    if (objIndex)
+        [self.context pmd_didDeleteIndex:objIndex object:self];
 }
 
 - (NSArray*)allIndexes

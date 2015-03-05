@@ -21,4 +21,27 @@
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    PMObjectIndex *copy = [[PMObjectIndex allocWithZone:zone] initWithIndex:_index order:_order];
+    return copy;
+}
+
+- (NSUInteger)hash
+{
+    return [_index hash];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if ([object isKindOfClass:PMObjectIndex.class])
+    {
+        PMObjectIndex *objectIndex = object;
+        
+        if ([objectIndex.index isEqualToString:_index])
+            return YES;
+    }
+    return NO;
+}
+
 @end

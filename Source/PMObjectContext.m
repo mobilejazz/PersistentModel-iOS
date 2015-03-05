@@ -22,7 +22,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
 
-#import "PMObjectContext_Private.h"
+#import "PMObjectContext.h"
 
 #import "PMPersistentObject.h"
 #import "PMPersistentStore.h"
@@ -51,6 +51,8 @@ static NSInteger kContextIDCount = 0;
     
     NSInteger _temporaryIDCount;
     NSInteger _contextID;
+    
+    NSMutableDictionary *_temporaryIndexes;
 }
 
 - (id)initWithPersistentStore:(PMPersistentStore *)persistentStore
@@ -65,6 +67,7 @@ static NSInteger kContextIDCount = 0;
         _savingCondition = [[NSCondition alloc] init];
         _objects = [NSMutableDictionary dictionary];
         _deletedObjects = [NSMutableSet set];
+        _temporaryIndexes = [NSMutableDictionary dictionary];
         
         _temporaryIDCount = 0;
         _contextID = ++kContextIDCount;
@@ -115,6 +118,25 @@ static NSInteger kContextIDCount = 0;
         [array addObject:baseObject];
     }
     
+    BOOL addingTemporaryIndexes = NO;
+    @synchronized(_temporaryIndexes)
+    {
+        for (PMObjectIndex *index in _temporaryIndexes)
+        {
+            if ([index.index isEqualToString:request.index])
+            {
+                PMBaseObject *object = _temporaryIndexes[index];
+                if ([object isKindOfClass:request.objectClass])
+                {
+                    [array addObject:object];
+                    addingTemporaryIndexes = YES;
+                }
+            }
+        }
+    }
+    
+    // WARNING: Losing the order when adding temprary indexes!
+    
     return array;
 }
 
@@ -152,7 +174,13 @@ static NSInteger kContextIDCount = 0;
 
 - (id)objectWithID:(PMObjectID*)objectID
 {
-    return [self pmd_objectWithID:objectID forceFetch:NO];
+    PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
+    
+    
+    if (!object)
+        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
+    
+    return object;
 }
 
 - (NSArray*)registeredObjects
@@ -344,12 +372,14 @@ static NSInteger kContextIDCount = 0;
         [_savingCondition signal];
         [_savingCondition unlock];
         
+        // Clearing saved indexes
+        [_temporaryIndexes removeAllObjects];
+        
         if (completionBlock)
             completionBlock(succeed);
         
         if (currentOperationIndex == _savingOperationIndex)
         {
-            // Sending did save notification
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
             
             if (savedObjects.count > 0)
@@ -362,17 +392,6 @@ static NSInteger kContextIDCount = 0;
                                                                        userInfo:dict];
             
             [[NSNotificationCenter defaultCenter] postNotification:notification];
-            
-            // Updating changes to the parent context
-            if (_parentContext)
-            {
-                for (PMBaseObject *object in savedObjects)
-                {
-                    // Retrieving the object from the parent context.
-                    PMBaseObject *myObject = [object baseObjectInContext:_parentContext];
-                    (void)myObject;
-                }
-            }
         }
     };
     
@@ -422,32 +441,6 @@ static NSInteger kContextIDCount = 0;
 }
 
 #pragma mark Private Methods
-
-- (id)pmd_objectWithID:(PMObjectID*)objectID forceFetch:(BOOL)forceFecth;
-{
-    PMBaseObject *object = [_objects objectForKey:objectID.URIRepresentation];
-    
-    if (!object)
-    {
-        object = [self pmd_baseObjectFromPersistentStoreWithObjectID:objectID];
-    }
-    else
-    {
-        if (forceFecth)
-        {
-            PMPersistentObject *po = [_persistentStore persistentObjectWithID:objectID.dbID];
-            PMBaseObject *objectFresh = [self pmd_baseObjectFromModelObject:po];
-            
-            NSDictionary *keyedValues = [objectFresh dictionaryWithValuesForKeys:[object.class pmd_allPersistentPropertyNames]];
-            
-            [object setValuesForKeysWithDictionary:keyedValues];
-            object.hasChanges = NO;
-            object.lastUpdate = object.lastUpdate;
-        }
-    }
-    
-    return object;
-}
 
 - (void)pmd_updatePersistentModelObjectOfBaseObject:(PMBaseObject*)baseObject
 {
@@ -522,6 +515,23 @@ static NSInteger kContextIDCount = 0;
         return nil;
     
     return [_persistentStore indexesForObjectWithID:objectID.dbID];
+}
+
+
+- (void)pmd_didRegisterIndex:(PMObjectIndex*)index object:(PMBaseObject*)object
+{
+    @synchronized(_temporaryIndexes)
+    {
+        [_temporaryIndexes setObject:object forKey:index];
+    }
+}
+
+- (void)pmd_didDeleteIndex:(PMObjectIndex*)index object:(PMBaseObject*)object
+{
+    @synchronized(_temporaryIndexes)
+    {
+        [_temporaryIndexes removeObjectForKey:index];
+    }
 }
 
 @end

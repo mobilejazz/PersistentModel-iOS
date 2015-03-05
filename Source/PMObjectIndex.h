@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface PMObjectIndex : NSObject
+@interface PMObjectIndex : NSObject <NSCopying>
 
 - (id)initWithIndex:(NSString*)index order:(NSInteger)order;
 

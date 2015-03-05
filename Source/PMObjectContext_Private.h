@@ -8,9 +8,13 @@
 
 #import "PMObjectContext.h"
 
+@class PMObjectIndex;
+
 @interface PMObjectContext ()
 
 - (NSArray*)pmd_fetchIndexesForObjectWithID:(PMObjectID*)objectID;
-- (id)pmd_objectWithID:(PMObjectID*)objectID forceFetch:(BOOL)forceFecth;
+
+- (void)pmd_didRegisterIndex:(PMObjectIndex*)index object:(PMBaseObject*)object;
+- (void)pmd_didDeleteIndex:(PMObjectIndex*)index object:(PMBaseObject*)object;
 
 @end
