@@ -160,6 +160,9 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 {
     NSMutableString *query = [NSMutableString stringWithString:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON objects.id = Data.id"];
     
+    if (index != nil)
+        [query appendFormat:@" JOIN Indexes ON Indexes.id = Data.id"];
+    
     if (type != nil)
         [query appendFormat:@" WHERE Objects.type = \"%@\"", type];
     
@@ -172,6 +175,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         
         [query appendFormat:@" Indexes.idx = \"%@\" ORDER BY Indexes.sort ASC", index];
     }
+
     
 //    if (limit > 0)
 //        [query appendFormat:@" LIMIT %ld", (long)limit];
