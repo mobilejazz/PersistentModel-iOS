@@ -170,7 +170,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         else
             [query appendFormat:@" WHERE"];
         
-        [query appendFormat:@" Objects.id IN (SELECT Indexes.id FROM Indexes WHERE Indexes.idx = \"%@\" ORDER BY Indexes.sort)", index];
+        [query appendFormat:@" Indexes.idx = \"%@\" ORDER BY Indexes.sort ASC", index];
     }
     
 //    if (limit > 0)
