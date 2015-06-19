@@ -30,6 +30,8 @@
 
 @implementation PMSQLiteObject
 
+@synthesize persistentStore = _persistentStore;
+
 - (id)init
 {
     return [self initWithID:NSNotFound type:nil];

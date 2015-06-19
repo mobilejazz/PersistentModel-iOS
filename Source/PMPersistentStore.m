@@ -54,7 +54,12 @@ NSString * const PMPersistentStoreObjectKey = @"PMPersistentStoreObjectKey";
     return nil;
 }
 
-- (NSArray*)persistentObjectsOfType:(NSString *)type index:(NSString*)index offset:(NSInteger)offset limit:(NSInteger)limit
+- (NSArray*)persistentObjectsOfType:(NSString *)type
+                              index:(NSString*)index
+                             offset:(NSInteger)offset
+                              limit:(NSInteger)limit
+                            orderBy:(PMOrderBy)orderBy
+                          ascending:(BOOL)ascending
 {
     return nil;
 }

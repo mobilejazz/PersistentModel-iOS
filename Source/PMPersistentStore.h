@@ -49,6 +49,24 @@ typedef enum __PMOptionDelete
 } PMOptionDelete;
 
 
+typedef NS_ENUM(NSUInteger, PMOrderBy)
+{
+    /** Default database order **/
+    PMOrderByDefault,
+    
+    /** Order by creation date **/
+    PMOrderByCreationDate,
+    
+    /** Order by access date **/
+    PMOrderByAccessDate,
+    
+    /** Order by update date **/
+    PMOrderByUpdateDate,
+    
+    /** Order by index **/
+    PMOrderByIndex,
+};
+
 /**
  * This value is used as Key in NSException and NSNotifications userInfo dictionary.
  **/
@@ -88,11 +106,21 @@ extern NSString * const PMPersistentStoreObjectKey;
 - (PMPersistentObject*)persistentObjectWithID:(NSInteger)dbID;
 
 /**
- * This method queries all stored objects for the given type.
+ * This method queries all stored objects for the given parameters.
  * @param type The model object type. Cannot be nil.
+ * @param index The index of the object. Can be nil.
+ * @param offset The offset of the fetch query.
+ * @param limit The limit of the fetch query.
+ * @param orderBy The order of the output.
+ * @param ascending The sorting of the output.
  * @return An array with all stored objects of the given type.
  **/
-- (NSArray*)persistentObjectsOfType:(NSString *)type index:(NSString*)index offset:(NSInteger)offset limit:(NSInteger)limit;
+- (NSArray*)persistentObjectsOfType:(NSString *)type
+                              index:(NSString*)index
+                             offset:(NSInteger)offset
+                              limit:(NSInteger)limit
+                            orderBy:(PMOrderBy)orderBy
+                          ascending:(BOOL)ascending;
 
 /** ---------------------------------------------------------------- **
  *  @name Object life-cycle

@@ -156,7 +156,12 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
 //    return array;
 //}
 
-- (NSArray*)persistentObjectsOfType:(NSString *)type index:(NSString*)index offset:(NSInteger)offset limit:(NSInteger)limit
+- (NSArray*)persistentObjectsOfType:(NSString *)type
+                              index:(NSString*)index
+                             offset:(NSInteger)offset
+                              limit:(NSInteger)limit
+                            orderBy:(PMOrderBy)orderBy
+                          ascending:(BOOL)ascending
 {
     NSMutableString *query = [NSMutableString stringWithString:@"SELECT Objects.id, Objects.type, Objects.updateDate, Data.data FROM Objects JOIN Data ON objects.id = Data.id"];
     
@@ -173,14 +178,36 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
         else
             [query appendFormat:@" WHERE"];
         
-        [query appendFormat:@" Indexes.idx = \"%@\" ORDER BY Indexes.sort ASC", index];
+        [query appendFormat:@" Indexes.idx = \"%@\"", index];
     }
 
+    if (orderBy == PMOrderByDefault)
+    {
+        // Nothing to do
+    }
+    else if (orderBy == PMOrderByCreationDate)
+    {
+        [query appendFormat:@" ORDER BY Objects.creationDate %@", ascending?@"ASC":@"DESC"];
+    }
+    else if (orderBy == PMOrderByAccessDate)
+    {
+        [query appendFormat:@" ORDER BY Objects.accessDate %@", ascending?@"ASC":@"DESC"];
+    }
+    else if (orderBy == PMOrderByUpdateDate)
+    {
+        [query appendFormat:@" ORDER BY Objects.updateDate %@", ascending?@"ASC":@"DESC"];
+    }
+    else if (orderBy == PMOrderByIndex)
+    {
+        if (index != nil)
+            [query appendFormat:@" ORDER BY Indexes.sort %@", ascending?@"ASC":@"DESC"];
+    }
     
-//    if (limit > 0)
-//        [query appendFormat:@" LIMIT %ld", (long)limit];
-//    
-//    [query appendFormat:@" OFFSET %ld", (long)offset];
+    if (limit > 0)
+        [query appendFormat:@" LIMIT %ld", (long)limit];
+    
+    if (offset > 0)
+        [query appendFormat:@" OFFSET %ld", (long)offset];
     
     __block  NSMutableArray *array = nil;
     

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "PMPersistentStore.h"
+
 /**
  * This class is used to setup a fetch query to the object context.
  **/
@@ -49,5 +51,15 @@
  * Offset for the set of entries to be retrieved. Default value is 0.
  **/
 @property (nonatomic, assign) NSInteger fetchOffset;
+
+/**
+ * The order of the fetch request.
+ **/
+@property (nonatomic, assign) PMOrderBy orderBy;
+
+/**
+ * If YES, the results will be returned ordered ascending, otherwise if NO, descending.
+ **/
+@property (nonatomic, assign) BOOL orderByAscending;
 
 @end

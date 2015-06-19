@@ -29,8 +29,6 @@
 		D257647C1A40776D00C59CD1 /* PMPersistentStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1418DC75E600E5F26D /* PMPersistentStore.m */; };
 		D257647D1A40776D00C59CD1 /* PMSQLiteObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1618DC75E600E5F26D /* PMSQLiteObject.m */; };
 		D257647E1A40776D00C59CD1 /* PMSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D201AA1918DC75E600E5F26D /* PMSQLiteStore.m */; };
-		D25764831A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D25764811A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig */; };
-		D25764841A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = D25764821A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig */; };
 		D25764871A407CF400C59CD1 /* TestUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D25764861A407CF400C59CD1 /* TestUtilities.m */; };
 		D25764891A407D2900C59CD1 /* PMPersistentStore_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = D25764881A407D2900C59CD1 /* PMPersistentStore_Tests.m */; };
 		D26C2B3518BFB1CF00E8BE90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D26C2B3418BFB1CF00E8BE90 /* Foundation.framework */; };
@@ -335,7 +333,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PM;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = "Joan Martin";
 				TargetAttributes = {
 					D25764681A4075EA00C59CD1 = {
@@ -377,8 +375,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D25764841A407AE500C59CD1 /* Pods-PersistentModel.release.xcconfig in Resources */,
-				D25764831A407AE500C59CD1 /* Pods-PersistentModel.debug.xcconfig in Resources */,
 				D26C2B3F18BFB1CF00E8BE90 /* InfoPlist.strings in Resources */,
 				D26C2B4718BFB1CF00E8BE90 /* Images.xcassets in Resources */,
 			);

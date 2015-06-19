@@ -17,7 +17,12 @@
 
 + (PMFetchRequest*)fetchRequestWithClass:(Class)objectClass index:(NSString*)index
 {
-    return [[PMFetchRequest alloc] initWithClass:objectClass index:index];
+    PMFetchRequest *fetchRequest = [[PMFetchRequest alloc] initWithClass:objectClass index:index];
+    
+    if (index != nil)
+        fetchRequest.orderBy = PMOrderByIndex;
+    
+    return fetchRequest;
 }
 
 - (id)initWithClass:(Class)objectClass index:(NSString*)index
@@ -30,6 +35,9 @@
         
         _fetchLimit = 0;
         _fetchOffset = 0;
+        
+        _orderBy = PMOrderByDefault;
+        _orderByAscending = YES;
     }
     return self;
 }

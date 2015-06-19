@@ -101,7 +101,9 @@ static NSInteger kContextIDCount = 0;
     NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(request.objectClass)
                                                           index:request.index
                                                          offset:request.fetchOffset
-                                                          limit:request.fetchLimit];
+                                                          limit:request.fetchLimit
+                                                        orderBy:request.orderBy
+                                                      ascending:request.orderByAscending];
     NSMutableArray *array = [NSMutableArray array];
     
     for (PMPersistentObject *mo in result)
@@ -145,7 +147,12 @@ static NSInteger kContextIDCount = 0;
     if (![objectClass isSubclassOfClass:PMBaseObject.class])
         return @[];
     
-    NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(objectClass) index:nil offset:0 limit:0];
+    NSArray *result = [_persistentStore persistentObjectsOfType:NSStringFromClass(objectClass)
+                                                          index:nil
+                                                         offset:0
+                                                          limit:0
+                                                        orderBy:PMOrderByCreationDate
+                                                      ascending:NO];
     
     NSMutableArray *array = [NSMutableArray array];
     
