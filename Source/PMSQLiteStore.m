@@ -191,7 +191,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
     }
     else if (orderBy == PMOrderByAccessDate)
     {
-        [query appendFormat:@" ORDER BY Objects.accessDate %@", ascending?@"ASC":@"DESC"];
+        [query appendFormat:@" ORDER BY Objects.accessDate %@", ascending?@"ASC":@"DESC"];
     }
     else if (orderBy == PMOrderByUpdateDate)
     {

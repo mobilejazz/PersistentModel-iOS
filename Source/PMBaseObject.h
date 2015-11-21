@@ -119,7 +119,7 @@ extern NSString * const PMBaseObjectNilKeyException;
 @interface PMBaseObject (Subclassing)
 
 /**
- * Convinience method to define the names of the properties that must be persisted.
+ * Convinience method to define the names of the properties that must be persisted.
  * @discussion Subclasses may override this method to mark those properties to be persistent. Property values will be accessed via KVC. By default this class returns an empty set.
  **/
 + (NSArray*)pmd_persistentPropertyNames;

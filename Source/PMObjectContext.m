@@ -348,8 +348,7 @@ static NSInteger kContextIDCount = 0;
                     
                     for (PMObjectIndex *objectIndex in object.deletedIndexes)
                     {
-                        BOOL success = [_persistentStore deleteIndex:objectIndex.index toObjectWithID:object.objectID.dbID];
-                        NSLog(@"DELETED INDEX <%@,%@> : %@", objectIndex.index, object.objectID.URIRepresentation.description, success?@"YES":@"NO");
+                        [_persistentStore deleteIndex:objectIndex.index toObjectWithID:object.objectID.dbID];
                     }
                     
                     object.deletedIndexes = @[];
@@ -360,8 +359,7 @@ static NSInteger kContextIDCount = 0;
                 {
                     for (PMObjectIndex *objectIndex in object.insertedIndexes)
                     {
-                        BOOL success = [_persistentStore addIndex:objectIndex toObjectWithID:object.objectID.dbID];
-                        NSLog(@"INSERTED INDEX <%@,%@> : %@", objectIndex.index, object.objectID.URIRepresentation.description, success?@"YES":@"NO");
+                        [_persistentStore addIndex:objectIndex toObjectWithID:object.objectID.dbID];
                     }
                     
                     object.insertedIndexes = @[];
