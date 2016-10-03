@@ -84,7 +84,8 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
 
 - (void)encodeWithCoder:(PMKeyedUnarchiver*)aCoder
 {
-    NSAssert(_temporaryID == NO, @"When encoding, the object ID cannot be temporal");
+    if (_temporaryID)
+        NSLog(@"WARNING: storing an object ID for type <%@> with a temprorary ID.", _type);
     
     [aCoder encodeInteger:_dbID forKey:@"dbID"];
     [aCoder encodeObject:_type forKey:@"type"];
