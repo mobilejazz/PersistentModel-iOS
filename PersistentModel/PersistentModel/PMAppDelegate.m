@@ -87,6 +87,16 @@ NSURL* applicationCacheDirectory();
                 NSLog(@"2 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
                 NSLog(@"2 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
             }];
+            
+            video.title = @"My Worst Video";
+            video.hasChanges = YES;
+            
+            // Saving to the store
+            [objectContext saveWithCompletionBlock:^(BOOL succeed) {
+                // Showing the final objectIDs of the objects
+                NSLog(@"3 USER  OBJECT ID: %@", user.objectID.URIRepresentation);
+                NSLog(@"3 VIDEO OBJECT ID: %@", video.objectID.URIRepresentation);
+            }];
         }
     }
 }

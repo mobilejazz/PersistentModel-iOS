@@ -24,11 +24,10 @@
 
 #import "PMSQLiteStore.h"
 
-#import "FMDatabase.h"
-#import "FMDatabaseAdditions.h"
-#import "FMDatabasePool.h"
-#import "FMDatabaseQueue.h"
-#import "FMResultSet.h"
+#import <FMDB/FMDatabaseAdditions.h>
+#import <FMDB/FMDatabasePool.h>
+#import <FMDB/FMDatabaseQueue.h>
+
 #import "PMObjectIndex.h"
 
 #import "PMSQLiteObject_Private.h"

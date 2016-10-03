@@ -46,13 +46,13 @@ static NSInteger kContextIDCount = 0;
     BOOL _hasChanges;
     
     BOOL _isSaving;
-    NSCondition *_savingCondition;
-    NSInteger _savingOperationIndex;
     
     NSInteger _temporaryIDCount;
     NSInteger _contextID;
     
     NSMutableDictionary *_temporaryIndexes;
+    
+    NSOperationQueue *_saveOperationQueue;
 }
 
 - (id)initWithPersistentStore:(PMPersistentStore *)persistentStore
@@ -64,7 +64,7 @@ static NSInteger kContextIDCount = 0;
         
         _hasChanges = NO;
         _isSaving = NO;
-        _savingCondition = [[NSCondition alloc] init];
+        
         _objects = [NSMutableDictionary dictionary];
         _deletedObjects = [NSMutableSet set];
         _temporaryIndexes = [NSMutableDictionary dictionary];
@@ -72,6 +72,8 @@ static NSInteger kContextIDCount = 0;
         _temporaryIDCount = 0;
         _contextID = ++kContextIDCount;
         
+        _saveOperationQueue = [[NSOperationQueue alloc] init];
+        _saveOperationQueue.maxConcurrentOperationCount = 1;
     }
     return self;
 }
@@ -283,15 +285,7 @@ static NSInteger kContextIDCount = 0;
 
 - (void)saveWithCompletionBlock:(void (^)(BOOL succeed))completionBlock
 {
-    void (^saveBlock)() = ^{
-        _savingOperationIndex += 1;
-        NSInteger currentOperationIndex = _savingOperationIndex;
-        
-        [_savingCondition lock];
-        
-        while (_isSaving)
-            [_savingCondition wait];
-        
+    [_saveOperationQueue addOperationWithBlock:^{
         _isSaving = YES;
         
         BOOL shouldSaveCoreDataContext = _hasChanges;
@@ -373,43 +367,27 @@ static NSInteger kContextIDCount = 0;
         
         _hasChanges = NO;
         
-        _isSaving = NO;
-        [_savingCondition signal];
-        [_savingCondition unlock];
-        
         // Clearing saved indexes
         [_temporaryIndexes removeAllObjects];
         
         if (completionBlock)
             completionBlock(succeed);
         
-        if (currentOperationIndex == _savingOperationIndex)
-        {
-            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-            
-            if (savedObjects.count > 0)
-                [dict setValuesForKeysWithDictionary:@{PMObjectContextSavedObjectsKey : savedObjects}];
-            if (deletedObjects.count > 0)
-                [dict setValuesForKeysWithDictionary:@{PMObjectContextDeletedObjectsKey : deletedObjects}];
-            
-            NSNotification *notification = [NSNotification notificationWithName:PMObjectContextDidSaveNotification
-                                                                         object:self
-                                                                       userInfo:dict];
-            
-            [[NSNotificationCenter defaultCenter] postNotification:notification];
-        }
-    };
-    
-    if ([NSThread isMainThread])
-    {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            saveBlock();
-        });
-    }
-    else
-    {
-        saveBlock();
-    }
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        
+        if (savedObjects.count > 0)
+            [dict setValuesForKeysWithDictionary:@{PMObjectContextSavedObjectsKey : savedObjects}];
+        if (deletedObjects.count > 0)
+            [dict setValuesForKeysWithDictionary:@{PMObjectContextDeletedObjectsKey : deletedObjects}];
+        
+        NSNotification *notification = [NSNotification notificationWithName:PMObjectContextDidSaveNotification
+                                                                     object:self
+                                                                   userInfo:dict];
+        
+        [[NSNotificationCenter defaultCenter] postNotification:notification];
+        
+        _isSaving = NO;
+     }];
 }
 
 - (void)mergeChangesFromContextDidSaveNotification:(NSNotification*)notification
@@ -474,7 +452,6 @@ static NSInteger kContextIDCount = 0;
     PMPersistentObject *persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
     
     [_objects removeObjectForKey:baseObject.objectID.URIRepresentation];
-    
     
     baseObject.objectID.dbID = persistentObject.dbID;
     baseObject.objectID.temporaryID = NO;

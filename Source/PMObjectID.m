@@ -71,6 +71,12 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
         _type = [aDecoder decodeObjectForKey:@"type"];
         _temporaryID = NO;
         
+        if (_dbID == NSNotFound)
+        {
+            NSLog(@"WARNING: object ID for type <%@> loaded from coder with an undefined database ID. Probably, this object comes from a temporary ID. Awaked object ID will be nil.", _type);
+            return nil;
+        }
+        
         _persistentStore = aDecoder.context.persistentStore;
     }
     return self;
