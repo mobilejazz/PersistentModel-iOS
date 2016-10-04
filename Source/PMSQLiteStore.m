@@ -250,7 +250,7 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
             if (![db executeUpdate:@"INSERT INTO Objects (type, creationDate) values (?, ?)", type, @([[NSDate date] timeIntervalSince1970])])
                 @throw UpdateException;
             
-            sqlite_int64 dbID = db.lastInsertRowId;
+            NSInteger dbID = (NSInteger)db.lastInsertRowId;
             
             persistentObject = [[PMSQLiteObject alloc] initWithID:dbID type:type];
             persistentObject.persistentStore = self;
@@ -605,8 +605,8 @@ static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateExce
                  ])
                 @throw UpdateException;
             
-            sqlite_int64 dbID = db.lastInsertRowId;
-            object.dbID = (long)dbID;
+            NSInteger dbID = (NSInteger)db.lastInsertRowId;
+            object.dbID = dbID;
             
             if (![db executeUpdate:@"INSERT INTO Data (id, data) values (?, ?)", dbID, object.data])
                 @throw UpdateException;
