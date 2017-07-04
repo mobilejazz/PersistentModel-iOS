@@ -110,7 +110,7 @@ static NSInteger kContextIDCount = 0;
     
     for (PMPersistentObject *mo in result)
     {
-        PMBaseObject *baseObject = [_objects objectForKey:[PMObjectID URIRepresentationForType:mo.type dbID:mo.dbID temporaryID:NO]];
+        PMBaseObject *baseObject = [self pmd_objectForKey:[PMObjectID URIRepresentationForType:mo.type dbID:mo.dbID temporaryID:NO]];
         
         if (!baseObject)
         {
@@ -160,7 +160,7 @@ static NSInteger kContextIDCount = 0;
     
     for (PMPersistentObject *mo in result)
     {
-        PMBaseObject *baseObject = [_objects objectForKey:[PMObjectID URIRepresentationForType:mo.type dbID:mo.dbID temporaryID:NO]];
+        PMBaseObject *baseObject = [self pmd_objectForKey:[PMObjectID URIRepresentationForType:mo.type dbID:mo.dbID temporaryID:NO]];
         
         if (!baseObject)
         {
@@ -177,13 +177,13 @@ static NSInteger kContextIDCount = 0;
 
 - (id)objectRegisteredForID:(PMObjectID*)objectID
 {
-    PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
+    PMBaseObject* object = [self pmd_objectForKey:objectID.URIRepresentation];
     return object;
 }
 
 - (id)objectWithID:(PMObjectID*)objectID
 {
-    PMBaseObject* object = [_objects objectForKey:objectID.URIRepresentation];
+    PMBaseObject* object = [self pmd_objectForKey:objectID.URIRepresentation];
     
     
     if (!object)
@@ -204,77 +204,82 @@ static NSInteger kContextIDCount = 0;
 
 - (BOOL)insertObject:(PMBaseObject*)object
 {
-    if (object == nil)
+    @synchronized (self)
     {
-        NSString *reason = @"You cannot insert a nil object into a context.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return NO;
-    }
-    
-    if (object.context == self)
-        return YES;
-    
-    if (object.context != nil)
-    {
-        NSString *reason = @"You cannot insert an object to two contexts at same time.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return NO;
-    }
-    
-    if ([self objectRegisteredForID:object.objectID] != nil)
-        return NO;
-    
-    if (object.objectID == nil)
-    {
-        NSInteger itemID = ++_temporaryIDCount;
-        NSInteger temporaryID = [[NSString stringWithFormat:@"%ld00%ld",_contextID, itemID] integerValue];
-        PMObjectID *objectID = [[PMObjectID alloc] initWithTempraryID:temporaryID type:NSStringFromClass(object.class)];
-        object.objectID = objectID;
-    }
-    else
-    {
-        if (object.objectID.temporaryID == YES)
+        if (object == nil)
         {
-            NSString *reason = @"You cannot insert a temporal object into a context.";
+            NSString *reason = @"You cannot insert a nil object into a context.";
             NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
             [exception raise];
             return NO;
         }
-        else if (object.objectID.persistentStore != _persistentStore)
-        {
-            NSString *reason = @"You cannot insert an object from a different persistent store.";
-            NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-            [exception raise];
-            return NO;
-        }
-    }
         
-    _hasChanges = YES;
-    
-    object.context = self;
-    [_objects setObject:object forKey:object.objectID.URIRepresentation];
-    
+        if (object.context == self)
+            return YES;
+        
+        if (object.context != nil)
+        {
+            NSString *reason = @"You cannot insert an object to two contexts at same time.";
+            NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+            [exception raise];
+            return NO;
+        }
+        
+        if ([self objectRegisteredForID:object.objectID] != nil)
+            return NO;
+        
+        if (object.objectID == nil)
+        {
+            NSInteger itemID = ++_temporaryIDCount;
+            NSInteger temporaryID = [[NSString stringWithFormat:@"%ld00%ld",(long)_contextID, (long)itemID] integerValue];
+            PMObjectID *objectID = [[PMObjectID alloc] initWithTempraryID:temporaryID type:NSStringFromClass(object.class)];
+            object.objectID = objectID;
+        }
+        else
+        {
+            if (object.objectID.temporaryID == YES)
+            {
+                NSString *reason = @"You cannot insert a temporal object into a context.";
+                NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+                [exception raise];
+                return NO;
+            }
+            else if (object.objectID.persistentStore != _persistentStore)
+            {
+                NSString *reason = @"You cannot insert an object from a different persistent store.";
+                NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+                [exception raise];
+                return NO;
+            }
+        }
+        
+        _hasChanges = YES;
+        
+        object.context = self;
+        [_objects setObject:object forKey:object.objectID.URIRepresentation];
+    }
     return YES;
 }
 
 - (void)deleteObject:(PMBaseObject*)object
 {
-    if (object == nil)
+    @synchronized (self)
     {
-        NSString *reason = @"You cannot delete a nil object from a context.";
-        NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
-        [exception raise];
-        return;
-    }
-    
-    if ([_objects.allValues containsObject:object])
-    {
-        _hasChanges = YES;
-        [_objects removeObjectForKey:object.objectID.URIRepresentation];
-        [_deletedObjects addObject:object];
-        object.context = nil;
+        if (object == nil)
+        {
+            NSString *reason = @"You cannot delete a nil object from a context.";
+            NSException *exception = [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
+            [exception raise];
+            return;
+        }
+        
+        if ([_objects.allValues containsObject:object])
+        {
+            _hasChanges = YES;
+            [_objects removeObjectForKey:object.objectID.URIRepresentation];
+            [_deletedObjects addObject:object];
+            object.context = nil;
+        }
     }
 }
 
@@ -292,7 +297,7 @@ static NSInteger kContextIDCount = 0;
         
         // -- SAVED OBJECTS -- //
         NSMutableSet *savedObjects = [NSMutableSet set];
-        NSArray *allValues = [_objects.allValues copy];
+        NSArray *allValues = _objects.allValues;
         
         // Create final object ID for temporary ones
         for (PMBaseObject *object in allValues)
@@ -410,7 +415,7 @@ static NSInteger kContextIDCount = 0;
     
     for (PMBaseObject *object in savedObjects)
     {
-        PMBaseObject *myObject = [_objects objectForKey:object.objectID.URIRepresentation];
+        PMBaseObject *myObject = [self pmd_objectForKey:object.objectID.URIRepresentation];
         
         if (myObject)
         {
@@ -424,6 +429,16 @@ static NSInteger kContextIDCount = 0;
 }
 
 #pragma mark Private Methods
+
+- (PMBaseObject*)pmd_objectForKey:(NSURL*)key
+{
+    id value = nil;
+    @synchronized (self)
+    {
+        value = [_objects objectForKey:key];
+    }
+    return value;
+}
 
 - (void)pmd_updatePersistentModelObjectOfBaseObject:(PMBaseObject*)baseObject
 {
@@ -447,16 +462,33 @@ static NSInteger kContextIDCount = 0;
 
 - (void)pmd_createPersistentModelObjectForBaseObject:(PMBaseObject*)baseObject
 {
-    NSAssert(baseObject.objectID.temporaryID == YES, @"Object must be temporary");
-    
-    PMPersistentObject *persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
-    
-    [_objects removeObjectForKey:baseObject.objectID.URIRepresentation];
-    
-    baseObject.objectID.dbID = persistentObject.dbID;
-    baseObject.objectID.temporaryID = NO;
-    baseObject.objectID.persistentStore = _persistentStore;
-    [_objects setObject:baseObject forKey:baseObject.objectID.URIRepresentation];
+    @synchronized (self)
+    {
+        if (baseObject == nil)
+            return;
+        
+        NSAssert(baseObject.objectID.temporaryID == YES, @"Object must be temporary");
+        
+        PMPersistentObject *persistentObject = [_persistentStore createNewEmptyPersistentObjectWithType:baseObject.objectID.type];
+        
+        NSURL *oldKey = baseObject.objectID.URIRepresentation;
+        
+        if (oldKey != nil)
+        {
+            [_objects removeObjectForKey:oldKey];
+        }
+        
+        baseObject.objectID.dbID = persistentObject.dbID;
+        baseObject.objectID.temporaryID = NO;
+        baseObject.objectID.persistentStore = _persistentStore;
+        
+        NSURL *newKey = baseObject.objectID.URIRepresentation;
+        
+        if (newKey != nil)
+        {
+            [_objects setObject:baseObject forKey:newKey];
+        }
+    }
 }
 
 - (PMBaseObject*)pmd_baseObjectFromPersistentStoreWithObjectID:(PMObjectID*)objectID
