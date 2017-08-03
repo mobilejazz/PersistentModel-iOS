@@ -457,6 +457,11 @@ static NSInteger kContextIDCount = 0;
     {
         object.lastUpdate = baseObject.lastUpdate;
         object.data = data;
+        
+        if (data.length == 0)
+        {
+            NSLog(@"Failed to encode data of object of type %@ with id %ld.", object.type, (long)object.dbID);
+        }
     }
 }
 
@@ -498,10 +503,14 @@ static NSInteger kContextIDCount = 0;
     if (object)
     {
         PMBaseObject *baseObject = [self pmd_baseObjectFromModelObject:object];
-        baseObject.hasChanges = NO;
-        [self insertObject:baseObject];
-
-        return baseObject;
+        
+        if (baseObject)
+        {
+            baseObject.hasChanges = NO;
+            [self insertObject:baseObject];
+            
+            return baseObject;
+        }
     }
     
     return nil;
@@ -517,8 +526,18 @@ static NSInteger kContextIDCount = 0;
     PMKeyedUnarchiver *unarchiver = [[PMKeyedUnarchiver alloc] initForReadingWithData:data context:self];
     
     PMBaseObject *baseObject = [unarchiver decodeObject];
-    baseObject.objectID = [[PMObjectID alloc] initWithDbID:persistentObject.dbID type:persistentObject.type persistentStore:persistentObject.persistentStore];
-    baseObject.lastUpdate = persistentObject.lastUpdate;
+    
+    if (!baseObject)
+    {
+        NSLog(@"Failed to decode object of type %@ with id %ld (decoding data length: %lu)", persistentObject.type, (long)persistentObject.dbID, (unsigned long)data.length);
+    }
+    else
+    {
+        baseObject.objectID = [[PMObjectID alloc] initWithDbID:persistentObject.dbID
+                                                          type:persistentObject.type
+                                               persistentStore:persistentObject.persistentStore];
+        baseObject.lastUpdate = persistentObject.lastUpdate;
+    }
     
     return baseObject;
 }
