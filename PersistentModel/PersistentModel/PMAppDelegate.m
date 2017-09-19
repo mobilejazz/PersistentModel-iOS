@@ -22,6 +22,7 @@ NSURL* applicationCacheDirectory();
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
+    // here we test the Persistent Model capabilities
     [self performTest];
     
     self.window.backgroundColor = [UIColor whiteColor];
