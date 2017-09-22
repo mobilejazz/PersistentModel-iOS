@@ -31,6 +31,8 @@
 #import "PMObjectIndex.h"
 
 #import "PMSQLiteObject_Private.h"
+#import <sqlite3.h>
+
 
 static NSString * const PMSQLiteStoreUpdateException = @"PMSQLiteStoreUpdateException";
 
