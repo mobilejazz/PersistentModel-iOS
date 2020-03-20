@@ -304,8 +304,6 @@
 				D25764651A4075EA00C59CD1 /* Sources */,
 				D25764661A4075EA00C59CD1 /* Frameworks */,
 				D25764671A4075EA00C59CD1 /* Resources */,
-				637335966A7107D96D0E559B /* [CP] Embed Pods Frameworks */,
-				2621D56CCDB4A99D563E6454 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -325,8 +323,6 @@
 				D26C2B2D18BFB1CF00E8BE90 /* Sources */,
 				D26C2B2E18BFB1CF00E8BE90 /* Frameworks */,
 				D26C2B2F18BFB1CF00E8BE90 /* Resources */,
-				10FA00442E33381717A9A196 /* [CP] Embed Pods Frameworks */,
-				9EEE31EA81170A689569C67A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -352,7 +348,7 @@
 						TestTargetID = D26C2B3018BFB1CF00E8BE90;
 					};
 					D26C2B3018BFB1CF00E8BE90 = {
-						DevelopmentTeam = 3VP5WS89TZ;
+						DevelopmentTeam = NQW83W9WXE;
 					};
 				};
 			};
@@ -361,6 +357,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = D26C2B2818BFB1CF00E8BE90;
@@ -411,66 +408,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		10FA00442E33381717A9A196 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2621D56CCDB4A99D563E6454 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PersistentModel Tests/Pods-PersistentModel Tests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		637335966A7107D96D0E559B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PersistentModel Tests/Pods-PersistentModel Tests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9EEE31EA81170A689569C67A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-PersistentModel/Pods-PersistentModel-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BD017AB48DA62F309FF2A119 /* [CP] Check Pods Manifest.lock */ = {
@@ -702,9 +639,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = NQW83W9WXE;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PersistentModel/PersistentModel-Prefix.pch";
 				INFOPLIST_FILE = "PersistentModel/PersistentModel-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilejazz.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = PersistentModel;
 				WRAPPER_EXTENSION = app;
@@ -720,6 +659,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PersistentModel/PersistentModel-Prefix.pch";
 				INFOPLIST_FILE = "PersistentModel/PersistentModel-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.mobilejazz.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = PersistentModel;
 				WRAPPER_EXTENSION = app;

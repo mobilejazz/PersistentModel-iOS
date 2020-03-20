@@ -17,7 +17,7 @@
 
 - (id)initForWritingWithMutableData:(NSMutableData *)data context:(PMObjectContext*)context
 {
-    self = [super initForWritingWithMutableData:data];
+    self = [super initRequiringSecureCoding:YES];
     if (self)
     {
         _context = context;
