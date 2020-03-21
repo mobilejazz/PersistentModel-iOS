@@ -23,4 +23,9 @@
     return [NSString stringWithFormat:@"%@ - %@, %ld, %@", [super description], _username, (long)_age, _avatarURL.absoluteString];
 }
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
 @end

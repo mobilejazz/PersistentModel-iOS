@@ -26,4 +26,9 @@
     return nil;
 }
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
 @end
