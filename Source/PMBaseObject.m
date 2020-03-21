@@ -270,6 +270,7 @@ static NSString* stringFromClass(Class theClass)
     return [array copy];
 }
 
+
 @end
 
 
@@ -281,6 +282,10 @@ static NSString* stringFromClass(Class theClass)
     return @[];
 }
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
 @end
 
 #pragma mark - Extensions

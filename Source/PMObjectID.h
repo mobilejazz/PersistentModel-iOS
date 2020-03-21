@@ -14,7 +14,7 @@
  * The object ID identifies uniquely each object in the persistent store and object context.
  * Objects can be temporal or final. Temporal objects haven't been saved yet to any persistent store.
  **/
-@interface PMObjectID : NSObject <NSCoding>
+@interface PMObjectID : NSObject <NSSecureCoding>
 
 /**
  * The class of the object represented by the object ID.

@@ -12,7 +12,7 @@
 
 @interface PMKeyedArchiver : NSKeyedArchiver
 
-- (id)initForWritingWithMutableData:(NSMutableData *)data context:(PMObjectContext*)context;
+- (id)initWithContext:(PMObjectContext*)context;
 
 @property (nonatomic, strong, readonly) PMObjectContext *context;
 

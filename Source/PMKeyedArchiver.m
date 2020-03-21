@@ -10,12 +10,7 @@
 
 @implementation PMKeyedArchiver
 
-- (id)initForWritingWithMutableData:(NSMutableData *)data
-{
-    return [self initForWritingWithMutableData:data context:nil];
-}
-
-- (id)initForWritingWithMutableData:(NSMutableData *)data context:(PMObjectContext*)context
+- (id)initWithContext:(PMObjectContext*)context
 {
     self = [super initRequiringSecureCoding:YES];
     if (self)

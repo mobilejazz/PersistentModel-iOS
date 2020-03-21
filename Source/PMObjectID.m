@@ -102,6 +102,10 @@ static NSString * const kPMObjectIDTemporalScheme = @"pmtid";
     return false;
 }
 
++ (BOOL)supportsSecureCoding {
+    return YES;
+}
+
 - (NSUInteger)hash
 {
     return self.URIRepresentation.hash;

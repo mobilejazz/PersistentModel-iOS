@@ -33,11 +33,11 @@ extern NSString * const PMBaseObjectNilKeyException;
  * Superclass of persistent objects. Persistent objects will have to be a subclass of this one.
  *
  * In order to persist properties, you can choose between:
- *   1. Manually encode and decode your properties using the NSCoding protocol methods.
+ *   1. Manually encode and decode your properties using the NSSecureCoding protocol methods.
  *   2. Override the method `keysForPersistentValues` and return a set of strings with the names of those properties you want to persist. Values will be retrieved using KVC.
  *   3. Do a mixture of options 1 and 2.
  **/
-@interface PMBaseObject : NSObject <NSCoding>
+@interface PMBaseObject : NSObject <NSSecureCoding>
 
 /** ---------------------------------------------------------------- **
  *  @name Creating instances and initializing

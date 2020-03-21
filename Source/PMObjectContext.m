@@ -444,8 +444,7 @@ static NSInteger kContextIDCount = 0;
 {
     NSAssert(baseObject.objectID.temporaryID == NO, @"Object cannot be temporary");
     
-    NSMutableData *data = [NSMutableData data];
-    PMKeyedArchiver *archiver = [[PMKeyedArchiver alloc] initForWritingWithMutableData:data context:self];
+    PMKeyedArchiver *archiver = [[PMKeyedArchiver alloc] initWithContext:self];
     [archiver encodeRootObject:baseObject];
     [archiver finishEncoding];
     
@@ -453,10 +452,12 @@ static NSInteger kContextIDCount = 0;
     
     NSAssert(object != nil, @"Object should not be nil");
     
+    NSData *data = archiver.encodedData;
+    
     if (object)
     {
         object.lastUpdate = baseObject.lastUpdate;
-        object.data = data;
+        object.data = archiver.encodedData;
         
         if (data.length == 0)
         {
@@ -518,15 +519,13 @@ static NSInteger kContextIDCount = 0;
 
 - (PMBaseObject*)pmd_baseObjectFromModelObject:(PMPersistentObject*)persistentObject
 {    
-    NSAssert(persistentObject != nil, @"Peristent object should not be nil");
+    NSAssert(persistentObject != nil, @"Persistent object should not be nil");
     NSAssert(persistentObject.dbID != NSNotFound, @"Persistent object must have a database identifier");
     
     NSData *data = persistentObject.data;
-    
-    PMKeyedUnarchiver *unarchiver = [[PMKeyedUnarchiver alloc] initForReadingWithData:data context:self];
+    PMKeyedUnarchiver *unarchiver = [[PMKeyedUnarchiver alloc] initForReadingWithData:data];
     
     PMBaseObject *baseObject = [unarchiver decodeObject];
-    
     if (!baseObject)
     {
         NSLog(@"Failed to decode object of type %@ with id %ld (decoding data length: %lu)", persistentObject.type, (long)persistentObject.dbID, (unsigned long)data.length);
